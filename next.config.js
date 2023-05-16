@@ -4,7 +4,6 @@ const nextConfig = {
 		appDir: true,
 	},
 	images: {
-		path: "/",
 		domains: ["placehold.co"],
 	},
 };
