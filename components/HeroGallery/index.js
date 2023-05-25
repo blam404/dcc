@@ -12,7 +12,7 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 export default function HeroGallery({
 	images,
-	speed = 2500,
+	speed = 3500,
 	pauseOnHover = false,
 }) {
 	return (
@@ -24,56 +24,21 @@ export default function HeroGallery({
 			scrollable={false}
 			pauseOnHover={pauseOnHover}
 		>
-			<div className="relative pt-[56px]">
+			<div className="relative py-[56px]">
 				<SliderTrack style={{ overflowX: "hidden" }} className="">
-					<Slide index={0} role="group">
-						<Image
-							src="https://placehold.co/1920x720/purple/white.jpg"
-							alt="hero image 1"
-							priority={true}
-							width="0"
-							height="0"
-							sizes="100vw"
-							className="w-full"
-						/>
-					</Slide>
-					<Slide index={1} role="group">
-						<Image
-							src="https://placehold.co/1920x720/blue/white.jpg"
-							alt="hero image 2"
-							priority={true}
-							width="0"
-							height="0"
-							sizes="100vw"
-							className="w-full"
-						/>
-					</Slide>
-					<Slide index={2} role="group">
-						<Image
-							src="https://placehold.co/1920x720/red/white.jpg"
-							alt="hero image 3"
-							priority={true}
-							width="0"
-							height="0"
-							sizes="100vw"
-							className="w-full"
-						/>
-					</Slide>
+					{images.map((image, index) => (
+						<Slide index={index} key={index} role="group">
+							<Image
+								src={image}
+								alt="Downtown Cap Co Slideshow"
+								width="0"
+								height="0"
+								sizes="100vw"
+								className="w-full"
+							/>
+						</Slide>
+					))}
 				</SliderTrack>
-				<div className="absolute bg-amber-300 right-0 -bottom-8">
-					<SliderButton
-						direction="prev"
-						className="mx-2 p-2 transition duration-200 text-white/30 hover:text-white"
-					>
-						<FaArrowLeft />
-					</SliderButton>
-					<SliderButton
-						direction="next"
-						className="mx-2 p-2 transition duration-200 text-white/30 hover:text-white"
-					>
-						<FaArrowRight />
-					</SliderButton>
-				</div>
 			</div>
 		</SliderProvider>
 	);

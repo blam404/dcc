@@ -1,59 +1,24 @@
 "use client";
 
 import React from "react";
-import { useJumplist } from "@faceless-ui/jumplist";
-import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Nav() {
-	const { scrollToID } = useJumplist();
-	const router = useRouter();
-	const pathname = usePathname();
-
-	const handleNavClick = (location) => {
-		if (pathname !== "/") {
-			router.push("/");
-		} else {
-			scrollToID(location);
-		}
-	};
-
 	return (
-		<nav className="fixed top-0 flex justify-center w-full bg-slate-700 shadow-md z-10">
-			<div className="container flex justify-between items-center py-2 relative">
+		<nav className="fixed top-0 flex justify-center w-full bg-amber-300 shadow-md z-10">
+			<div className="container flex justify-center items-center py-2 relative">
 				<Link href="/">
-					<div className="logo text-amber-300 text-sm text-center">
-						E&nbsp;&nbsp;&nbsp;R&nbsp;&nbsp;&nbsp;P
-						<br />
-						RECORDINGS
-					</div>
+					<Image
+						src="/images/dtccLogo.png"
+						alt="Downtown Cab Co Logo"
+						priority={true}
+						width="0"
+						height="0"
+						sizes="100vw"
+						className="w-44"
+					/>
 				</Link>
-				<div className="flex text-neutral-50">
-					<button
-						className="p-2 mx-2"
-						onClick={() => {
-							handleNavClick("latest");
-						}}
-					>
-						Latest
-					</button>
-					<button
-						className="p-2 mx-2"
-						onClick={() => {
-							handleNavClick("about");
-						}}
-					>
-						About Us
-					</button>
-					<button
-						className="p-2 ml-2"
-						onClick={() => {
-							handleNavClick("artists");
-						}}
-					>
-						Artists
-					</button>
-				</div>
 			</div>
 		</nav>
 	);
