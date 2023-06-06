@@ -8,7 +8,7 @@ export default function Footer() {
 					<h3 className="text-2xl">Contact Us</h3>
 				</div>
 				<div className="text-center">
-					<strong>CEO</strong>: Malcom Delacroix | (470) 204-4260
+					<strong>CEO</strong>: Malcom Delacroix | (323) 555-5555
 				</div>
 				<div className="text-center">
 					<strong>Web Dev</strong>: Morgan Man | (485) 529-8012 |
