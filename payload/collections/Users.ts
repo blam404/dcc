@@ -11,6 +11,7 @@ export const Users: CollectionConfig = {
 	admin: {
 		disableDuplicate: true,
 		useAsTitle: "characterName",
+		group: "Contacts",
 	},
 	auth: {
 		tokenExpiration: 14400,

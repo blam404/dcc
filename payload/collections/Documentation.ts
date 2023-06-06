@@ -4,6 +4,7 @@ export const Documentation: CollectionConfig = {
 	slug: "documentation",
 	admin: {
 		useAsTitle: "title",
+		group: "Misc",
 	},
 	access: {
 		read: () => true,
