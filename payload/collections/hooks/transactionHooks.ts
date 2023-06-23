@@ -3,9 +3,6 @@ import {
 	CollectionBeforeChangeHook,
 } from "payload/types";
 
-// NEXT STEPS:
-// ADD FUNCTIONS FOR UPDATE OPERATION FOR fillRemainingBalance and updateAccounts
-
 export const updateToFrom: CollectionBeforeChangeHook = async ({
 	data,
 	req,

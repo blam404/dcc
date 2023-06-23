@@ -11,6 +11,13 @@ export const Roles: CollectionConfig = {
 	admin: {
 		group: "Misc",
 		useAsTitle: "role",
+		description: "Roles for users",
+	},
+	access: {
+		create: ({ req: { user } }) => user.roles === "admin",
+		read: ({ req: { user } }) => user.roles === "admin",
+		update: ({ req: { user } }) => user.roles === "admin",
+		delete: ({ req: { user } }) => user.roles === "admin",
 	},
 	fields: [
 		{

@@ -1,20 +1,28 @@
-import { CollectionBeforeChangeHook, CollectionConfig } from "payload/types";
-
-const combinedName: CollectionBeforeChangeHook = async ({ data }) => {
-	if (!data.combinedName) {
-		data.combinedName = `${data.vehicle} - ${data.licensePlate}`;
-	}
-	return data;
-};
+import { CollectionConfig } from "payload/types";
+import { combinedName } from "./hooks/vehicleHooks";
 
 export const Vehicles: CollectionConfig = {
 	slug: "vehicles",
 	admin: {
-		group: "Assets",
 		useAsTitle: "combinedName",
+		group: "Assets",
+		description: "Vehicles owned by the company",
+		listSearchableFields: ["vechicle", "licensePlate"],
 	},
 	access: {
-		read: () => true,
+		create: ({ req: { user } }) => {
+			const allowed = ["admin", "editor"];
+			return allowed.includes(user.roles);
+		},
+		read: ({ req: { user } }) => {
+			const allowed = ["admin", "editor", "employee"];
+			return allowed.includes(user.roles);
+		},
+		update: ({ req: { user } }) => {
+			const allowed = ["admin", "editor"];
+			return allowed.includes(user.roles);
+		},
+		delete: ({ req: { user } }) => user.roles === "admin",
 	},
 	hooks: {
 		beforeChange: [combinedName],

@@ -10,22 +10,34 @@ export const Transactions: CollectionConfig = {
 	slug: "transactions",
 	admin: {
 		group: "Finances",
-		useAsTitle: "description",
-		description: "List of transactions to and from bank account(s).",
+		description: "List of transactions to and from bank account(s)",
 		listSearchableFields: ["to", "from"],
 	},
-	// access: {
-	// 	create: ({req: {user}}) => {
-	// 		[]
-	// 		return Boolean(user?.roles?.includes("admin"))
-	// 	},
-	// 	read: ({req: {user}}) => {
-	// 		user.
-	// 	},
-	// 	update: ({req: {user}}) => {},
-	// 	delete: ({req: {user}}) => {},
-	// 	admin: ({req: {user}}) => {},
-	// },
+	access: {
+		create: ({ req: { user } }) => {
+			const allowed = ["admin", "editor", "employee"];
+			return allowed.includes(user.roles);
+		},
+		read: ({ req: { user } }) => {
+			const isRecordCreator = {
+				"createdBy.value": {
+					equals: user.id,
+				},
+			};
+			const allowed = ["admin", "editor"];
+			return allowed.includes(user.roles) || isRecordCreator;
+		},
+		update: ({ req: { user } }) => {
+			const isRecordCreator = {
+				"createdBy.value": {
+					equals: user.id,
+				},
+			};
+			const allowed = ["admin", "editor"];
+			return allowed.includes(user.roles) || isRecordCreator;
+		},
+		delete: ({ req: { user } }) => user.roles === "admin",
+	},
 	hooks: {
 		beforeChange: [
 			updateToFrom,

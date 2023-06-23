@@ -6,6 +6,23 @@ export const Companies: CollectionConfig = {
 		disableDuplicate: true,
 		useAsTitle: "companyName",
 		group: "Contacts",
+		description: "Companies we've worked with or want to work with",
+		listSearchableFields: ["contacts", "companyName"],
+	},
+	access: {
+		create: ({ req: { user } }) => {
+			const allowed = ["admin", "editor"];
+			return allowed.includes(user.roles);
+		},
+		read: ({ req: { user } }) => {
+			const allowed = ["admin", "editor", "employee"];
+			return allowed.includes(user.roles);
+		},
+		update: ({ req: { user } }) => {
+			const allowed = ["admin", "editor"];
+			return allowed.includes(user.roles);
+		},
+		delete: ({ req: { user } }) => user.roles === "admin",
 	},
 	fields: [
 		{

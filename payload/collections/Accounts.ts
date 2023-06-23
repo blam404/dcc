@@ -1,20 +1,28 @@
-import { CollectionBeforeChangeHook, CollectionConfig } from "payload/types";
-
-const addStartBalance: CollectionBeforeChangeHook = async ({ data }) => {
-	if (!data.startingBalance) {
-		data.startingBalance = data.balance;
-	}
-	return data;
-};
+import { CollectionConfig } from "payload/types";
+import { addStartBalance } from "./hooks/accountHooks";
 
 export const Accounts: CollectionConfig = {
 	slug: "accounts",
 	admin: {
-		group: "Finances",
+		disableDuplicate: true,
 		useAsTitle: "accountName",
+		group: "Finances",
+		description: "Company-owned bank accounts",
 	},
 	access: {
-		read: () => true,
+		create: ({ req: { user } }) => {
+			const allowed = ["admin", "editor"];
+			return allowed.includes(user.roles);
+		},
+		read: ({ req: { user } }) => {
+			const allowed = ["admin", "editor", "employee"];
+			return allowed.includes(user.roles);
+		},
+		update: ({ req: { user } }) => {
+			const allowed = ["admin", "editor"];
+			return allowed.includes(user.roles);
+		},
+		delete: ({ req: { user } }) => user.roles === "admin",
 	},
 	hooks: {
 		beforeChange: [addStartBalance],
@@ -35,11 +43,20 @@ export const Accounts: CollectionConfig = {
 			label: "Balance",
 			type: "number",
 			required: true,
+			access: {
+				read: ({ req: { user } }) => {
+					const allowed = ["admin", "editor"];
+					return allowed.includes(user.roles);
+				},
+			},
 		},
 		{
 			name: "startingBalance",
 			label: "Starting Balance",
 			type: "number",
+			admin: {
+				hidden: true,
+			},
 		},
 	],
 };
