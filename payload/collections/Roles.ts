@@ -9,7 +9,7 @@ import {
 export const Roles: CollectionConfig = {
 	slug: "roles",
 	admin: {
-		hidden: true,
+		group: "Misc",
 		useAsTitle: "role",
 	},
 	fields: [
@@ -17,6 +17,11 @@ export const Roles: CollectionConfig = {
 			name: "role",
 			label: "Role",
 			type: "text",
+		},
+		{
+			name: "description",
+			label: "Description",
+			type: "textarea",
 		},
 	],
 };

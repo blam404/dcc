@@ -19,6 +19,11 @@ export const Companies: CollectionConfig = {
 			type: "text",
 		},
 		{
+			name: "notes",
+			label: "Notes",
+			type: "textarea",
+		},
+		{
 			name: "contacts",
 			type: "blocks",
 			admin: {

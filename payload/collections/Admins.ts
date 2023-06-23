@@ -7,7 +7,7 @@ import {
 } from "../accessControl/isAdminOrSelf";
 
 export const Users: CollectionConfig = {
-	slug: "users",
+	slug: "admins",
 	admin: {
 		disableDuplicate: true,
 		useAsTitle: "characterName",
@@ -32,56 +32,14 @@ export const Users: CollectionConfig = {
 			type: "text",
 		},
 		{
-			name: "title",
-			label: "Title",
-			type: "text",
-		},
-		{
-			name: "phoneNumber",
-			label: "Phone Number",
-			type: "text",
-		},
-		{
-			name: "bankAccount",
-			label: "Bank Account #",
-			type: "text",
-		},
-		{
-			name: "discord",
-			label: "Discord",
-			type: "text",
-		},
-		{
-			name: "fiveMID",
-			label: "FiveM ID",
-			type: "text",
-		},
-		{
 			name: "roles",
-			type: "select",
-			options: [
-				{
-					label: "Admin",
-					value: "admin",
-				},
-				{
-					label: "Editor",
-					value: "editor",
-				},
-				{
-					label: "Employee",
-					value: "employee",
-				},
-				{
-					label: "User",
-					value: "user",
-				},
-			],
-		},
-		{
-			name: "timezone",
-			label: "Time Zone",
-			type: "text",
+			type: "relationship",
+			relationTo: ["roles"],
+			hasMany: true,
+			admin: {
+				isSortable: true,
+				allowCreate: false,
+			},
 		},
 	],
 };
