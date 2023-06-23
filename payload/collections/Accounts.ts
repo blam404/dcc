@@ -1,4 +1,11 @@
-import { CollectionConfig } from "payload/types";
+import { CollectionBeforeChangeHook, CollectionConfig } from "payload/types";
+
+const addStartBalance: CollectionBeforeChangeHook = async ({ data }) => {
+	if (!data.startingBalance) {
+		data.startingBalance = data.balance;
+	}
+	return data;
+};
 
 export const Accounts: CollectionConfig = {
 	slug: "accounts",
@@ -8,6 +15,9 @@ export const Accounts: CollectionConfig = {
 	},
 	access: {
 		read: () => true,
+	},
+	hooks: {
+		beforeChange: [addStartBalance],
 	},
 	fields: [
 		{
@@ -25,6 +35,11 @@ export const Accounts: CollectionConfig = {
 			label: "Balance",
 			type: "number",
 			required: true,
+		},
+		{
+			name: "startingBalance",
+			label: "Starting Balance",
+			type: "number",
 		},
 	],
 };

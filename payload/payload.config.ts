@@ -6,6 +6,7 @@ import { Documentation } from "./collections/Documentation";
 import { Accounts } from "./collections/Accounts";
 import { Companies } from "./collections/Companies";
 import { Transactions } from "./collections/Transactions";
+import { Vehicles } from "./collections/Vehicles";
 
 export default buildConfig({
 	admin: {
@@ -18,6 +19,7 @@ export default buildConfig({
 		Roles,
 		Transactions,
 		Users,
+		Vehicles,
 	],
 	globals: [
 		// Your globals here
