@@ -81,7 +81,7 @@ export default function Dashboard() {
 								<strong>Type</strong>
 							</div>
 							<div className="w-1/5">
-								<strong>Amount (Payment + Donation)</strong>
+								<strong>Amount</strong>
 							</div>
 							<div className="w-1/5">
 								<strong>Vehicle</strong>

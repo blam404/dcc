@@ -19,7 +19,7 @@ const handleLogin = async (email, password) => {
 			value: result.token,
 			expires: new Date(result.exp * 1000),
 		});
-		return { success: true };
+		return { success: true, user: result.user };
 	} catch (error) {
 		return { error: error.message };
 	}
