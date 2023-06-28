@@ -20,6 +20,9 @@ export default function Nav() {
 					/>
 				</Link>
 			</div>
+			<div>
+				<Link href="/login">LOGIN</Link>
+			</div>
 		</nav>
 	);
 }

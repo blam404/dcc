@@ -179,9 +179,6 @@ export const fillRemainingBalance: CollectionBeforeChangeHook = async ({
 		const totalOriginal =
 			originalDoc.paymentAmount + originalDoc.donationAmount;
 
-		// console.log("BEFORE CHANGE data 1: ", originalDoc);
-		// console.log("BEFORE CHANGE data 2: ", data);
-		console.log("1: ", data);
 		if (user) {
 			data.updatedBy = {
 				value: user.id,
@@ -190,11 +187,8 @@ export const fillRemainingBalance: CollectionBeforeChangeHook = async ({
 		}
 
 		if (data.updatedBy.value !== "6492312d69e524c5ca439c7a") {
-			console.log("2.1: not udpated by bot");
 			if (from?.value !== fromOriginal?.value) {
-				console.log("2.20: The From value changed");
 				if (from?.relationTo === "accounts") {
-					console.log("2.21: from is an accout");
 					const results = await payload.find({
 						collection: "transactions",
 						showHiddenFields: true,
@@ -225,7 +219,7 @@ export const fillRemainingBalance: CollectionBeforeChangeHook = async ({
 						depth: 0,
 					});
 					const transactions = results.docs;
-					console.log("2.22: transactions: ", transactions);
+
 					let previousBalance;
 					if (transactions.length > 0) {
 						const previousTransaction = transactions[0];
@@ -243,18 +237,13 @@ export const fillRemainingBalance: CollectionBeforeChangeHook = async ({
 						previousBalance = account.startingBalance;
 					}
 
-					console.log("2.23: previousBalance: ", previousBalance);
-
 					data.fromRemaining = previousBalance - total;
 				} else {
-					console.timeLog("2.24: from is not an account");
 					data.fromRemaining = null;
 				}
 			}
 			if (to?.value !== toOriginal?.value) {
-				console.log("2.30: The To value changed");
 				if (to?.relationTo === "accounts") {
-					console.log("2.31: to is an account");
 					const results = await payload.find({
 						collection: "transactions",
 						showHiddenFields: true,
@@ -285,7 +274,7 @@ export const fillRemainingBalance: CollectionBeforeChangeHook = async ({
 						depth: 0,
 					});
 					const transactions = results.docs;
-					console.log("2.32: transactions: ", transactions);
+
 					let previousBalance;
 					if (transactions.length > 0) {
 						const previousTransaction = transactions[0];
@@ -302,11 +291,8 @@ export const fillRemainingBalance: CollectionBeforeChangeHook = async ({
 						previousBalance = account.startingBalance;
 					}
 
-					console.log("2.33: previousBalance: ", previousBalance);
-
 					data.toRemaining = previousBalance + total;
 				} else {
-					console.log("2.34: to is not an account");
 					data.toRemaining = null;
 				}
 			}
@@ -315,7 +301,6 @@ export const fillRemainingBalance: CollectionBeforeChangeHook = async ({
 				to?.value === toOriginal?.value &&
 				total !== totalOriginal
 			) {
-				console.log("3: Only the amount changed");
 				const difference = total - totalOriginal;
 				if (from?.relationTo === "accounts") {
 					data.fromRemaining -= difference;
@@ -326,7 +311,7 @@ export const fillRemainingBalance: CollectionBeforeChangeHook = async ({
 			}
 		}
 	}
-	//console.log("3.1: ", data);
+
 	return data;
 };
 
@@ -360,7 +345,6 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 			});
 		}
 	} else if (operation === "update") {
-		console.log("4: Running afterChange hook");
 		const { from, to } = doc;
 		const fromOriginal = previousDoc.from;
 		const toOriginal = previousDoc.to;
@@ -373,18 +357,14 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 			doc.updatedBy.value !== "6492312d69e524c5ca439c7a" &&
 			doc.updatedBy.value?.id !== "6492312d69e524c5ca439c7a"
 		) {
-			// console.log("5 prevDoc: ", previousDoc);
-			// console.log("5 doc: ", doc);
 			if (
 				from.value !== fromOriginal.value ||
 				to.value !== toOriginal.value
 			) {
-				console.log("5: From or To value changed");
 				const addBack: string[] = [];
 				const subtractFrom: string[] = [];
 
 				if (from.value !== fromOriginal.value) {
-					console.log("5.1: from value changed");
 					if (from.relationTo === "accounts") {
 						subtractFrom.push(from.value);
 					}
@@ -393,7 +373,6 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 					}
 				}
 				if (to.value !== toOriginal.value) {
-					console.log("5.2: to value changed");
 					if (to.relationTo === "accounts") {
 						addBack.push(to.value);
 					}
@@ -403,7 +382,6 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 				}
 
 				addBack.forEach(async (accountId) => {
-					console.log("5.3: running through addBack");
 					const results = await payload.find({
 						collection: "transactions",
 						showHiddenFields: true,
@@ -434,10 +412,9 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 						depth: 0,
 					});
 					const transactions = results.docs;
-					console.log("5.4 transactions: ", transactions);
+
 					if (transactions.length > 0) {
 						transactions.forEach(async (transaction) => {
-							console.log("5.5 running through each transaction");
 							await payload.update({
 								collection: "transactions",
 								id: transaction.id,
@@ -466,8 +443,7 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 						collection: "accounts",
 						id: accountId,
 					});
-					console.log("5.51 account: ", account);
-					console.log("5.52 difference: ", difference);
+
 					await payload.update({
 						collection: "accounts",
 						id: accountId,
@@ -478,7 +454,6 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 				});
 
 				subtractFrom.forEach(async (accountId) => {
-					console.log("5.6 running through subtractFrom");
 					const results = await payload.find({
 						collection: "transactions",
 						showHiddenFields: true,
@@ -509,7 +484,7 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 						depth: 0,
 					});
 					const transactions = results.docs;
-					console.log("5.7 transactions: ", transactions);
+
 					if (transactions.length > 0) {
 						transactions.forEach(async (transaction) => {
 							await payload.update({
@@ -540,8 +515,7 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 						collection: "accounts",
 						id: accountId,
 					});
-					console.log("5.71 account: ", account);
-					console.log("5.72 difference: ", difference);
+
 					await payload.update({
 						collection: "accounts",
 						id: accountId,
@@ -557,9 +531,7 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 				to.value === toOriginal.value &&
 				total !== totalOriginal
 			) {
-				console.log("6: Only the amount changed");
 				if (from.relationTo === "accounts") {
-					console.log("7: from is an account");
 					const results = await payload.find({
 						collection: "transactions",
 						showHiddenFields: true,
@@ -591,7 +563,6 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 					});
 					const transactions = results.docs;
 					transactions.forEach(async (transaction) => {
-						console.log("8: transaction: ", transaction);
 						const query = {
 							collection: "transactions",
 							id: transaction.id,
@@ -611,29 +582,27 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 							},
 							depth: 0,
 						};
-						console.log("8.1 query: ", query);
+
 						const asdf = await payload.update(query);
-						console.log("9: ", asdf);
 					});
-					console.log("10: ", from);
+
 					const account = await payload.findByID({
 						collection: "accounts",
 						id: from.value,
 					});
-					console.log("10.1: ", account);
+
 					const query = {
 						balance: account.balance + difference,
 					};
-					console.log("10.2: ", query);
+
 					await payload.update({
 						collection: "accounts",
 						id: from.value,
 						data: query,
 					});
 				}
-				console.log("11");
+
 				if (to.relationTo === "accounts") {
-					console.log("12: to is an account");
 					const results = await payload.find({
 						collection: "transactions",
 						showHiddenFields: true,
@@ -664,7 +633,7 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 						depth: 0,
 					});
 					const transactions = results.docs;
-					console.log("13: transactions: ", transactions);
+
 					transactions.forEach(async (transaction) => {
 						const query = {
 							collection: "transactions",
@@ -685,7 +654,7 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 							},
 							depth: 0,
 						};
-						console.log("13.1 query: ", query);
+
 						const asdf = await payload.update(query);
 					});
 
@@ -700,7 +669,6 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 							balance: account.balance - difference,
 						},
 					});
-					console.log("17: accResult: ", accResult);
 				}
 			}
 		}

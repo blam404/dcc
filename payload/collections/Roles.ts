@@ -1,11 +1,5 @@
 import { CollectionConfig } from "payload/types";
 
-import { isAdmin, isAdminFieldLevel } from "../accessControl/isAdmin";
-import {
-	isAdminOrSelf,
-	isAdminOrSelfFieldLevel,
-} from "../accessControl/isAdminOrSelf";
-
 export const Roles: CollectionConfig = {
 	slug: "roles",
 	admin: {
@@ -14,10 +8,10 @@ export const Roles: CollectionConfig = {
 		description: "Roles for users",
 	},
 	access: {
-		create: ({ req: { user } }) => user.roles === "admin",
-		read: ({ req: { user } }) => user.roles === "admin",
-		update: ({ req: { user } }) => user.roles === "admin",
-		delete: ({ req: { user } }) => user.roles === "admin",
+		create: ({ req: { user } }) => user?.roles === "admin",
+		read: ({ req: { user } }) => user?.roles === "admin",
+		update: ({ req: { user } }) => user?.roles === "admin",
+		delete: ({ req: { user } }) => user?.roles === "admin",
 	},
 	fields: [
 		{

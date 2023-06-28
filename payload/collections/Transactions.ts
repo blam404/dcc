@@ -16,27 +16,27 @@ export const Transactions: CollectionConfig = {
 	access: {
 		create: ({ req: { user } }) => {
 			const allowed = ["admin", "editor", "employee"];
-			return allowed.includes(user.roles);
+			return allowed.includes(user?.roles);
 		},
 		read: ({ req: { user } }) => {
 			const isRecordCreator = {
 				"createdBy.value": {
-					equals: user.id,
+					equals: user?.id,
 				},
 			};
 			const allowed = ["admin", "editor"];
-			return allowed.includes(user.roles) || isRecordCreator;
+			return allowed.includes(user?.roles) || isRecordCreator;
 		},
 		update: ({ req: { user } }) => {
 			const isRecordCreator = {
 				"createdBy.value": {
-					equals: user.id,
+					equals: user?.id,
 				},
 			};
 			const allowed = ["admin", "editor"];
-			return allowed.includes(user.roles) || isRecordCreator;
+			return allowed.includes(user?.roles) || isRecordCreator;
 		},
-		delete: ({ req: { user } }) => user.roles === "admin",
+		delete: ({ req: { user } }) => user?.roles === "admin",
 	},
 	hooks: {
 		beforeChange: [

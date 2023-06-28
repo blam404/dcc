@@ -5,6 +5,9 @@ const { withPayload } = require("@payloadcms/next-payload");
 
 const nextConfig = withPayload(
 	{
+		experimental: {
+			serverActions: true,
+		},
 		images: {
 			domains: ["placehold.co"],
 		},

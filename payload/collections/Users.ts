@@ -10,34 +10,34 @@ export const Users: CollectionConfig = {
 		listSearchableFields: ["email", "characterName", "discord"],
 	},
 	auth: {
-		tokenExpiration: 14400,
+		tokenExpiration: 604800, //this is in seconds and for 7 days.
 		verify: false,
-		maxLoginAttempts: 5,
-		lockTime: 600 * 1000, //this is in milliseconds which is why it"s x1000
+		maxLoginAttempts: 10,
+		lockTime: 600 * 1000, //this is in milliseconds
 	},
 	access: {
 		create: ({ req: { user } }) => {
 			const allowed = ["admin", "editor"];
-			return allowed.includes(user.roles);
+			return allowed.includes(user?.roles);
 		},
 		read: ({ req: { user } }) => {
 			const recordIsUser = {
 				id: {
-					equals: user.id,
+					equals: user?.id,
 				},
 			};
 			const allowed = ["admin", "editor"];
-			return allowed.includes(user.roles) || recordIsUser;
+			return allowed.includes(user?.roles) || recordIsUser;
 		},
 		update: ({ id, req: { user } }) => {
-			const recordIsUser = user.id === id;
+			const recordIsUser = user?.id === id;
 			const allowed = ["admin", "editor"];
-			return allowed.includes(user.roles) || recordIsUser;
+			return allowed.includes(user?.roles) || recordIsUser;
 		},
-		delete: ({ req: { user } }) => user.roles === "admin",
+		delete: ({ req: { user } }) => user?.roles === "admin",
 		admin: ({ req: { user } }) => {
 			const allowed = ["admin", "editor", "employee"];
-			return allowed.includes(user.roles);
+			return allowed.includes(user?.roles);
 		},
 	},
 	fields: [
