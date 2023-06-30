@@ -12,7 +12,7 @@ export default function Footer() {
 				</div>
 				<div className="text-center">
 					<strong>Web Dev</strong>: Morgan Man | (485) 529-8012 |
-					PrototypeM#2692
+					PrototypeM
 				</div>
 				<div className="mt-4 text-sm">
 					Copyright 2023 Downtown Cap Co.

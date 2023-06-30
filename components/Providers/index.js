@@ -2,7 +2,10 @@
 
 import React, { createContext, useEffect, useState } from "react";
 import { JumplistProvider } from "@faceless-ui/jumplist";
-import { ModalProvider } from "@faceless-ui/modal";
+import { ModalProvider, ModalContainer } from "@faceless-ui/modal";
+import { ToastContainer } from "react-toastify";
+
+import "react-toastify/dist/ReactToastify.css";
 
 import getUser from "../../utils/getUser";
 
@@ -29,6 +32,19 @@ export default function Providers({ children }) {
 					rootMargin="-100px 0px 0px 0px"
 					smoothScroll
 				>
+					<ModalContainer />
+					<ToastContainer
+						autoClose={2500}
+						closeOnClick
+						draggable
+						hideProgressBar={true}
+						newestOnTop={false}
+						pauseOnFocusLoss={false}
+						pauseOnHover={false}
+						position="bottom-center"
+						rtl={false}
+						theme="light"
+					/>
 					{children}
 				</JumplistProvider>
 			</ModalProvider>

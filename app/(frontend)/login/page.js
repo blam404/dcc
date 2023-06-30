@@ -2,9 +2,12 @@
 
 import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 import handleLogin from "./handleLogin";
 import { UserContext } from "../../../components/Providers";
+
+import { FaSpinner } from "react-icons/fa";
 
 export default function Login() {
 	const [loading, setLoading] = useState(true);
@@ -15,14 +18,16 @@ export default function Login() {
 		if (user) {
 			router.push("/employee/dashboard");
 		} else {
-			setTimeout(() => setLoading(false), 3000);
+			setTimeout(() => setLoading(false), 2500);
 		}
 	}, [user]);
 
 	const login = async (formData) => {
 		const { email, password } = Object.fromEntries(formData.entries());
 		if (!email || !password) {
-			// do a toast message saying email and password required
+			toast.error("Email and password required", {
+				toastId: "emailPassword",
+			});
 			return;
 		}
 		const results = await handleLogin(email, password);
@@ -30,12 +35,25 @@ export default function Login() {
 			setUser(results.user);
 			router.push("/employee/dashboard");
 		} else if (results.error) {
-			//do a toast message saying the results.error
+			toast.error(
+				"There was a problem logging in. Try again or contact the admin.",
+				{
+					toastId: "loginError",
+				}
+			);
+			toast.error(`Error message: ${results.error}`, {
+				toastId: "errorMessage",
+			});
 		}
 	};
 
 	return (
 		<>
+			{loading && (
+				<div className="absolute top-1/4 -translate-y-1/4 left-1/2 -translate-x-1/2">
+					<FaSpinner className="animate-spin h-12 w-12" />
+				</div>
+			)}
 			{!loading && (
 				<div className="absolute top-1/4 -translate-y-1/4 left-1/2 -translate-x-1/2">
 					<div className="bg-amber-300 py-4 px-6 rounded-md">
@@ -62,7 +80,7 @@ export default function Login() {
 									<input
 										type="submit"
 										value="Log In"
-										className="bg-gray-800 text-neutral-100 py-1 px-3 rounded-md"
+										className="bg-neutral-800 text-neutral-100 py-1 px-3 rounded-md hover:cursor-pointer"
 									/>
 								</div>
 							</form>

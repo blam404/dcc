@@ -18,11 +18,15 @@ const getRecords = async (
 			limit: 10,
 			overrideAccess,
 			user,
-			sort: "-createdAt",
+			sort: "-date",
 		});
-		return results.docs;
+		return {
+			success: results.docs,
+		};
 	} catch (error) {
-		console.log("error: ", error.message);
+		return {
+			error: error.message,
+		};
 	}
 };
 

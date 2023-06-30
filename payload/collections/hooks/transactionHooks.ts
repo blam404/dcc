@@ -209,14 +209,22 @@ export const fillRemainingBalance: CollectionBeforeChangeHook = async ({
 									],
 								},
 								{
-									createdAt: {
-										less_than: data.createdAt,
+									date: {
+										less_than: data.date,
 									},
 								},
 							],
 						},
-						sort: "-createdAt",
+						sort: "-date",
 						depth: 0,
+						user: {
+							id: "6492312d69e524c5ca439c7a",
+							characterName: "Bot",
+							email: "robot@dcc.com",
+							createdAt: "2023-06-20T23:07:25.596Z",
+							updatedAt: "2023-06-23T19:39:39.367Z",
+							roles: "editor",
+						},
 					});
 					const transactions = results.docs;
 
@@ -264,14 +272,22 @@ export const fillRemainingBalance: CollectionBeforeChangeHook = async ({
 									],
 								},
 								{
-									createdAt: {
-										less_than: data.createdAt,
+									date: {
+										less_than: data.date,
 									},
 								},
 							],
 						},
-						sort: "-createdAt",
+						sort: "-date",
 						depth: 0,
+						user: {
+							id: "6492312d69e524c5ca439c7a",
+							characterName: "Bot",
+							email: "robot@dcc.com",
+							createdAt: "2023-06-20T23:07:25.596Z",
+							updatedAt: "2023-06-23T19:39:39.367Z",
+							roles: "editor",
+						},
 					});
 					const transactions = results.docs;
 
@@ -402,14 +418,22 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 									],
 								},
 								{
-									createdAt: {
-										greater_than: doc.createdAt,
+									date: {
+										greater_than: doc.date,
 									},
 								},
 							],
 						},
-						sort: "+createdAt",
+						sort: "+date",
 						depth: 0,
+						user: {
+							id: "6492312d69e524c5ca439c7a",
+							characterName: "Bot",
+							email: "robot@dcc.com",
+							createdAt: "2023-06-20T23:07:25.596Z",
+							updatedAt: "2023-06-23T19:39:39.367Z",
+							roles: "editor",
+						},
 					});
 					const transactions = results.docs;
 
@@ -435,6 +459,14 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 										value: "6492312d69e524c5ca439c7a",
 										relationTo: "users",
 									},
+								},
+								user: {
+									id: "6492312d69e524c5ca439c7a",
+									characterName: "Bot",
+									email: "robot@dcc.com",
+									createdAt: "2023-06-20T23:07:25.596Z",
+									updatedAt: "2023-06-23T19:39:39.367Z",
+									roles: "editor",
 								},
 							});
 						});
@@ -474,13 +506,13 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 									],
 								},
 								{
-									createdAt: {
-										greater_than: doc.createdAt,
+									date: {
+										greater_than: doc.date,
 									},
 								},
 							],
 						},
-						sort: "+createdAt",
+						sort: "+date",
 						depth: 0,
 					});
 					const transactions = results.docs;
@@ -507,6 +539,14 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 										value: "6492312d69e524c5ca439c7a",
 										relationTo: "users",
 									},
+								},
+								user: {
+									id: "6492312d69e524c5ca439c7a",
+									characterName: "Bot",
+									email: "robot@dcc.com",
+									createdAt: "2023-06-20T23:07:25.596Z",
+									updatedAt: "2023-06-23T19:39:39.367Z",
+									roles: "editor",
 								},
 							});
 						});
@@ -552,14 +592,22 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 									],
 								},
 								{
-									createdAt: {
-										greater_than: doc.createdAt,
+									date: {
+										greater_than: doc.date,
 									},
 								},
 							],
 						},
-						sort: "+createdAt",
+						sort: "+date",
 						depth: 0,
+						user: {
+							id: "6492312d69e524c5ca439c7a",
+							characterName: "Bot",
+							email: "robot@dcc.com",
+							createdAt: "2023-06-20T23:07:25.596Z",
+							updatedAt: "2023-06-23T19:39:39.367Z",
+							roles: "editor",
+						},
 					});
 					const transactions = results.docs;
 					transactions.forEach(async (transaction) => {
@@ -581,6 +629,14 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 								},
 							},
 							depth: 0,
+							user: {
+								id: "6492312d69e524c5ca439c7a",
+								characterName: "Bot",
+								email: "robot@dcc.com",
+								createdAt: "2023-06-20T23:07:25.596Z",
+								updatedAt: "2023-06-23T19:39:39.367Z",
+								roles: "editor",
+							},
 						};
 
 						const asdf = await payload.update(query);
@@ -623,14 +679,22 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 									],
 								},
 								{
-									createdAt: {
-										greater_than: doc.createdAt,
+									date: {
+										greater_than: doc.date,
 									},
 								},
 							],
 						},
-						sort: "+createdAt",
+						sort: "+date",
 						depth: 0,
+						user: {
+							id: "6492312d69e524c5ca439c7a",
+							characterName: "Bot",
+							email: "robot@dcc.com",
+							createdAt: "2023-06-20T23:07:25.596Z",
+							updatedAt: "2023-06-23T19:39:39.367Z",
+							roles: "editor",
+						},
 					});
 					const transactions = results.docs;
 
@@ -653,6 +717,14 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 								},
 							},
 							depth: 0,
+							user: {
+								id: "6492312d69e524c5ca439c7a",
+								characterName: "Bot",
+								email: "robot@dcc.com",
+								createdAt: "2023-06-20T23:07:25.596Z",
+								updatedAt: "2023-06-23T19:39:39.367Z",
+								roles: "editor",
+							},
 						};
 
 						const asdf = await payload.update(query);

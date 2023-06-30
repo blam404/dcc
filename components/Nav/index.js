@@ -1,13 +1,16 @@
 "use client";
 
-import React from "react";
+import React, { useContext } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { UserContext } from "../Providers";
 
 export default function Nav() {
+	const { user } = useContext(UserContext);
 	return (
-		<nav className="fixed top-0 flex justify-center w-full bg-amber-300 shadow-md z-10">
-			<div className="container flex justify-center items-center py-2 relative">
+		<nav className="fixed top-0 w-full bg-amber-300 shadow-md z-10">
+			<div className="container mx-auto flex justify-between items-center py-2">
+				<div></div>
 				<Link href="/">
 					<Image
 						src="/images/dtccLogo.png"
@@ -19,9 +22,11 @@ export default function Nav() {
 						className="w-44"
 					/>
 				</Link>
-			</div>
-			<div>
-				<Link href="/login">LOGIN</Link>
+				<Link href="/login">
+					<button className="bg-neutral-800 text-neutral-100 py-1 px-3 rounded-md">
+						{user ? "Dashboard" : "Log In"}
+					</button>
+				</Link>
 			</div>
 		</nav>
 	);
