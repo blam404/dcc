@@ -18,6 +18,7 @@ const handleLogin = async (email, password) => {
 			name: "payload-token",
 			value: result.token,
 			expires: new Date(result.exp * 1000),
+			sameSite: "strict",
 		});
 		return { success: true, user: result.user };
 	} catch (error) {
