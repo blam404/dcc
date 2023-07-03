@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useTransition } from "react";
+import { revalidatePath } from "next/cache";
 import { Modal, useModal } from "@faceless-ui/modal";
 import { format } from "date-fns";
 import DatePicker from "react-datepicker";
@@ -10,6 +11,8 @@ import { toast } from "react-toastify";
 import { UserContext } from "../../../../components/Providers";
 import getRecords from "../../../../utils/getRecords";
 import createTransaction from "../dashboard/createTransaction";
+
+import { FaSpinner } from "react-icons/fa";
 
 import "./style.scss";
 
@@ -94,6 +97,7 @@ const expenseType = [
 ];
 
 export default function AddModal({ transactions, setTransactions }) {
+	const [pending, startTransition] = useTransition();
 	const [date, setDate] = useState(new Date());
 	const [transType, setTransType] = useState("");
 	const [secondType, setSecondType] = useState(null);
@@ -298,6 +302,12 @@ export default function AddModal({ transactions, setTransactions }) {
 			if (results.success) {
 				resetFields();
 				toggleModal("addTransaction");
+				results.success.createdBy = {
+					value: {
+						characterName: user.characterName,
+					},
+				};
+
 				const added = [results.success, ...transactions];
 				// sorting in case transaction is back dated
 				added.sort(
@@ -581,9 +591,16 @@ export default function AddModal({ transactions, setTransactions }) {
 							<div className="flex justify-center mt-4">
 								<button
 									className="px-2 py-1 rounded-md bg-amber-300"
-									onClick={handleSubmit}
+									onClick={async () => {
+										startTransition(handleSubmit);
+									}}
+									disabled={pending}
 								>
-									Submit
+									{pending ? (
+										<FaSpinner className="animate-spin h-6 w-6" />
+									) : (
+										"Submit"
+									)}
 								</button>
 							</div>
 						</>

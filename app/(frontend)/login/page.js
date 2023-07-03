@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
@@ -11,6 +11,9 @@ import { FaSpinner } from "react-icons/fa";
 
 export default function Login() {
 	const [loading, setLoading] = useState(true);
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const [pending, startTransition] = useTransition();
 	const router = useRouter();
 	const { user, setUser } = useContext(UserContext);
 
@@ -18,12 +21,11 @@ export default function Login() {
 		if (user) {
 			router.push("/employee/dashboard");
 		} else {
-			setTimeout(() => setLoading(false), 2500);
+			setTimeout(() => setLoading(false), 500);
 		}
 	}, [user]);
 
-	const login = async (formData) => {
-		const { email, password } = Object.fromEntries(formData.entries());
+	const login = async () => {
 		if (!email || !password) {
 			toast.error("Email and password required", {
 				toastId: "emailPassword",
@@ -35,12 +37,9 @@ export default function Login() {
 			setUser(results.user);
 			router.push("/employee/dashboard");
 		} else if (results.error) {
-			toast.error(
-				"There was a problem logging in. Try again or contact the admin.",
-				{
-					toastId: "loginError",
-				}
-			);
+			toast.error("There was a problem logging in.", {
+				toastId: "loginError",
+			});
 			toast.error(`Error message: ${results.error}`, {
 				toastId: "errorMessage",
 			});
@@ -59,13 +58,16 @@ export default function Login() {
 					<div className="bg-amber-300 py-4 px-6 rounded-md">
 						<h1 className="text-2xl text-center">Employee Login</h1>
 						<div className="pt-4">
-							<form action={login}>
+							<form>
 								<div>
 									<div>Email: </div>
 									<input
 										type="text"
 										className="leading-4 rounded-md w-80 px-2 py-1"
-										name="email"
+										value={email}
+										onChange={(e) =>
+											setEmail(e.target.value)
+										}
 									/>
 								</div>
 								<div className="pt-4">
@@ -73,15 +75,26 @@ export default function Login() {
 									<input
 										type="password"
 										className="leading-4 rounded-md w-80 px-2 py-1"
-										name="password"
+										value={password}
+										onChange={(e) =>
+											setPassword(e.target.value)
+										}
 									/>
 								</div>
 								<div className="pt-4 text-center">
-									<input
-										type="submit"
-										value="Log In"
+									<button
+										disabled={pending}
 										className="bg-neutral-800 text-neutral-100 py-1 px-3 rounded-md hover:cursor-pointer"
-									/>
+										onClick={async () => {
+											startTransition(() => login());
+										}}
+									>
+										{pending ? (
+											<FaSpinner className="animate-spin h-6 w-6" />
+										) : (
+											"Log In"
+										)}
+									</button>
 								</div>
 							</form>
 						</div>

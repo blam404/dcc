@@ -375,6 +375,14 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.40.0.tgz#3ba73359e11f5a7bd3e407f70b3528abfae69cec"
   integrity sha512-ElyB54bJIhXQYVKjDSvCkPO1iU1tSAeVQJbllWJq1XQSmmA4dgFk8CbiBGpiOPxleE48vDogxCtmMYku4HSVLA==
 
+"@faceless-ui/collapsibles@^1.1.5":
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@faceless-ui/collapsibles/-/collapsibles-1.1.5.tgz#153c4e55e4bd1f1eeaaf80b4232c0cf7d31f196c"
+  integrity sha512-ozym6tdYV/jakldJzph9gPUX3JEBXsyexyVJUrXqrLOYuj5UW5lZpJ8yztvVT83tHFAF2PRug0UVmFybKfo1Wg==
+  dependencies:
+    react-animate-height "^3.0.4"
+    react-transition-group "^4.4.2"
+
 "@faceless-ui/jumplist@^2.0.0-alpha.2":
   version "2.0.0-alpha.2"
   resolved "https://registry.yarnpkg.com/@faceless-ui/jumplist/-/jumplist-2.0.0-alpha.2.tgz#d3779a4bc7e83af355154a698a2aaedb80a5401e"
@@ -5893,6 +5901,11 @@ react-animate-height@^2.1.2:
   dependencies:
     classnames "^2.2.5"
     prop-types "^15.6.1"
+
+react-animate-height@^3.0.4:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/react-animate-height/-/react-animate-height-3.1.1.tgz#3e324c417a5d18afcdd78d2ad71108c14868a28b"
+  integrity sha512-UkC6+V3ZlCneBRaSM7aUctDJ+PRP6ztcGtxvU7MTeoMMWPhz8BQNaX7QWaZrkzp1ih1G8uZZ+DI9nfLvtD6OdQ==
 
 react-datepicker@^4.10.0:
   version "4.11.0"

@@ -47,10 +47,6 @@ export default function Dashboard() {
 		}
 	}, [user]);
 
-	useEffect(() => {
-		console.log("transaction: ", transactions);
-	}, [transactions]);
-
 	const parseType = (transaction) => {
 		const type =
 			transaction.revenueType ||
@@ -177,7 +173,7 @@ export default function Dashboard() {
 											{transaction.notes}
 										</div>
 										{["admin", "editor"].includes(
-											user.roles
+											user?.roles
 										) && (
 											<div className="w-1/12 flex justify-center">
 												{
