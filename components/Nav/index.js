@@ -6,11 +6,6 @@ import Image from "next/image";
 import { UserContext } from "../Providers";
 import { useRouter } from "next/navigation";
 import { FaUserCircle } from "react-icons/fa";
-import {
-	Collapsible,
-	CollapsibleToggler,
-	div,
-} from "@faceless-ui/collapsibles";
 
 import handleLogOut from "../../utils/handleLogOut";
 
