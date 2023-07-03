@@ -7,7 +7,7 @@ import { UserContext } from "../Providers";
 import { useRouter } from "next/navigation";
 import { FaUserCircle } from "react-icons/fa";
 
-import handleLogOut from "../../utils/handleLogOut";
+import handleLogOut from "./handleLogOut";
 
 export default function Nav() {
 	const { user, setUser } = useContext(UserContext);
@@ -55,17 +55,24 @@ export default function Nav() {
 							setShowMenu(!showMenu);
 						}}
 					>
-						<div className="py-1 px-2 hover:bg-amber-100">
-							<Link
-								href={user ? "/employee/dashboard" : "/login"}
-							>
-								{user ? "Dashboard" : "Log In"}
-							</Link>
-						</div>
-						{user && (
+						<Link href={user ? "/employee/dashboard" : "/login"}>
 							<div className="py-1 px-2 hover:bg-amber-100">
-								<button onClick={logOut}>Log Out</button>
+								{user ? "Dashboard" : "Log In"}
 							</div>
+						</Link>
+
+						{user && (
+							<>
+								<Link href="/employee/profile">
+									<div className="py-1 px-2 hover:bg-amber-100">
+										Profile
+									</div>
+								</Link>
+
+								<div className="py-1 px-2 hover:bg-amber-100">
+									<button onClick={logOut}>Log Out</button>
+								</div>
+							</>
 						)}
 					</div>
 				</div>
