@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useContext, useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
-import { Modal, ModalToggler } from "@faceless-ui/modal";
+import { ModalToggler } from "@faceless-ui/modal";
 import { toast } from "react-toastify";
 import {
 	Collapsible,
@@ -22,6 +23,7 @@ import { FaPen, FaChevronDown, FaPlus, FaSpinner } from "react-icons/fa";
 export default function Dashboard() {
 	const [loading, setLoading] = useState(true);
 	const [transactions, setTransactions] = useState([]);
+	const [accounts, setAccounts] = useState([]);
 
 	const { user } = useContext(UserContext);
 	const router = useRouter();
@@ -47,6 +49,25 @@ export default function Dashboard() {
 				}
 			};
 			findTransactions();
+			if (["admin", "editor"].includes(user.roles)) {
+				const getAccounts = async () => {
+					const results = await getRecords(user, false, "accounts");
+					if (results.success) {
+						setAccounts(results.success);
+					} else if (results.error) {
+						toast.error(
+							"Error retrieving bank account information. If this persists, contact the admin.",
+							{
+								toastId: "accountError",
+							}
+						);
+						toast.error(`Error message: ${results.error}`, {
+							toastId: "accountErrorMsg",
+						});
+					}
+				};
+				getAccounts();
+			}
 		} else {
 			router.push("/login");
 		}
@@ -87,6 +108,7 @@ export default function Dashboard() {
 				return transaction.expenseOther;
 		}
 	};
+
 	return (
 		<>
 			{loading && (
@@ -96,180 +118,207 @@ export default function Dashboard() {
 			)}
 			{!loading && (
 				<div className="container mx-auto">
-					<h1 className="text-center text-xl">
-						<strong>Last 10 Transactions</strong>
-					</h1>
-					{/* {["admin", "editor"].includes(user.roles) && (
-						<div>
-							<button className="rounded bg-amber-300 mr-4 py-1 px-2">
-								Transaction View
-							</button>
-							<button className="rounded bg-amber-300 py-1 px-2">
-								Account View
-							</button>
-						</div>
-					)} */}
-					<ul className="pt-4 w-3/4 mx-auto ">
-						<li className="flex flex-wrap rounded-md items-center py-2 px-4 bg-amber-300">
-							<div className="w-2/12">
-								<strong>Date</strong>
-							</div>
-							<div className="w-3/12">
-								<strong>Type</strong>
-							</div>
-							<div className="w-2/12">
-								<strong>Amount</strong>
-							</div>
-							<div className="w-4/12">
-								<strong>Notes</strong>
-							</div>
-							<div className="w-1/12 flex justify-end">
-								<ModalToggler
-									slug="addTransaction"
-									className="py-1 px-2 bg-amber-100 rounded"
-								>
-									<FaPlus />
-								</ModalToggler>
-							</div>
-						</li>
-						{transactions.length === 0 && (
-							<li className="flex justify-center my-4">
-								There aren&apos;t any previous transactions.
-							</li>
-						)}
-						<CollapsibleGroup>
-							{transactions.length > 0 &&
-								transactions.map((transaction, index) => {
-									return (
-										<Collapsible
-											key={transaction.id}
-											transTime={250}
-											transCurve="ease-in"
-										>
-											<li
-												className={`flex flex-wrap rounded-md items-center py-2 px-4 ${
-													index % 2 === 0
-														? "bg-amber-100"
-														: ""
-												}`}
+					{["admin", "editor"].includes(user.roles) && (
+						<div className="w-3/4 mx-auto">
+							<h1 className="text-center text-xl">
+								<strong>Bank Accounts</strong>
+							</h1>
+							<div className="grid grid-cols-3  gap-4 pt-4">
+								{accounts.map((account) => (
+									<div
+										key={account.id}
+										className="p-2 bg-amber-100 border border-amber-300 rounded-md"
+									>
+										<h2 className="text-lg">
+											<strong>
+												{account.accountName}
+											</strong>
+										</h2>
+										<div>${account.balance}</div>
+										<div>
+											<Link
+												href={`/employee/accounts/${account.id}`}
 											>
-												<div className="w-2/12">
-													{format(
-														new Date(
-															transaction.date
-														),
-														"LLL d, y"
-													)}
-												</div>
-												<div className="w-3/12">
-													{capFirstLetter(
-														transaction.transactionType
-													)}
-													: {parseType(transaction)}
-												</div>
-												<div className="w-2/12">
-													$
-													{transaction.paymentAmount +
-														transaction.donationAmount}
-												</div>
-												<div className="w-4/12">
-													{transaction.notes}
-												</div>
-												<div className="w-1/12 flex justify-end">
-													{/* <FaPen className="mx-2" /> */}
-													<CollapsibleToggler>
-														<FaChevronDown className="mx-2 cursor-pointer" />
-													</CollapsibleToggler>
-												</div>
-												<CollapsibleContent className="w-full">
-													<hr className="h-[1px] border border-dashed border-neutral-400 my-2 w-full" />
-													<div className="w-full flex flex-wrap justify-center">
-														<div className="w-1/3">
-															<p>
-																<strong>
-																	From:
-																</strong>{" "}
-																{transaction
-																	.from.value
-																	.companyName ||
-																	transaction
-																		.from
-																		.value
-																		.accountName ||
-																	transaction
-																		.from
-																		.value
-																		.characterName}
-															</p>
-															<p>
-																<strong>
-																	To:
-																</strong>{" "}
-																{transaction.to
-																	.value
-																	.companyName ||
-																	transaction
-																		.to
-																		.value
-																		.accountName ||
-																	transaction
-																		.to
-																		.value
-																		.characterName}
-															</p>
-														</div>
-														<div className="w-1/3">
-															<p>
-																<strong>
-																	Payment:
-																</strong>{" "}
-																$
-																{
-																	transaction.paymentAmount
-																}
-															</p>
-															<p>
-																<strong>
-																	Donation:
-																</strong>{" "}
-																$
-																{
-																	transaction.donationAmount
-																}
-															</p>
-														</div>
-														<div className="w-1/3">
-															<p>
-																<strong>
-																	Vehicle
-																	Used:
-																</strong>{" "}
-																{transaction
-																	.vehicle
-																	?.value
-																	.combinedName ||
-																	"N/A"}
-															</p>
-															<p>
-																<strong>
-																	Created By:
-																</strong>{" "}
-																{
-																	transaction
-																		.createdBy
-																		.value
-																		.characterName
-																}
-															</p>
-														</div>
+												<em className="cursor-pointer">
+													View details
+												</em>
+											</Link>
+										</div>
+									</div>
+								))}
+							</div>
+						</div>
+					)}
+					<div>
+						<h1 className="text-center text-xl pt-4">
+							<strong>Last 10 Transactions</strong>
+						</h1>
+						<ul className="pt-4 w-3/4 mx-auto ">
+							<li className="flex flex-wrap rounded-md items-center py-2 px-4 bg-amber-300">
+								<div className="w-2/12">
+									<strong>Date</strong>
+								</div>
+								<div className="w-3/12">
+									<strong>Type</strong>
+								</div>
+								<div className="w-2/12">
+									<strong>Amount</strong>
+								</div>
+								<div className="w-4/12">
+									<strong>Notes</strong>
+								</div>
+								<div className="w-1/12 flex justify-end">
+									<ModalToggler
+										slug="addTransaction"
+										className="py-1 px-2 bg-amber-100 rounded"
+									>
+										<FaPlus />
+									</ModalToggler>
+								</div>
+							</li>
+							{transactions.length === 0 && (
+								<li className="flex justify-center my-4">
+									There aren&apos;t any previous transactions.
+								</li>
+							)}
+							<CollapsibleGroup>
+								{transactions.length > 0 &&
+									transactions.map((transaction, index) => {
+										return (
+											<Collapsible
+												key={transaction.id}
+												transTime={250}
+												transCurve="ease-in"
+											>
+												<li
+													className={`flex flex-wrap rounded-md items-center py-2 px-4 ${
+														index % 2 === 0
+															? "bg-amber-100"
+															: ""
+													}`}
+												>
+													<div className="w-2/12">
+														{format(
+															new Date(
+																transaction.date
+															),
+															"LLL d, y"
+														)}
 													</div>
-												</CollapsibleContent>
-											</li>
-										</Collapsible>
-									);
-								})}
-						</CollapsibleGroup>
-					</ul>
+													<div className="w-3/12">
+														{capFirstLetter(
+															transaction.transactionType
+														)}
+														:{" "}
+														{parseType(transaction)}
+													</div>
+													<div className="w-2/12">
+														$
+														{transaction.paymentAmount +
+															transaction.donationAmount}
+													</div>
+													<div className="w-4/12">
+														{transaction.notes}
+													</div>
+													<div className="w-1/12 flex justify-end">
+														{/* <FaPen className="mx-2" /> */}
+														<CollapsibleToggler>
+															<FaChevronDown className="mx-2 cursor-pointer" />
+														</CollapsibleToggler>
+													</div>
+													<CollapsibleContent className="w-full">
+														<hr className="h-[1px] border border-dashed border-neutral-400 my-2 w-full" />
+														<div className="w-full flex flex-wrap justify-center">
+															<div className="w-1/3">
+																<p>
+																	<strong>
+																		From:
+																	</strong>{" "}
+																	{transaction
+																		.from
+																		.value
+																		.companyName ||
+																		transaction
+																			.from
+																			.value
+																			.accountName ||
+																		transaction
+																			.from
+																			.value
+																			.characterName}
+																</p>
+																<p>
+																	<strong>
+																		To:
+																	</strong>{" "}
+																	{transaction
+																		.to
+																		.value
+																		.companyName ||
+																		transaction
+																			.to
+																			.value
+																			.accountName ||
+																		transaction
+																			.to
+																			.value
+																			.characterName}
+																</p>
+															</div>
+															<div className="w-1/3">
+																<p>
+																	<strong>
+																		Payment:
+																	</strong>{" "}
+																	$
+																	{
+																		transaction.paymentAmount
+																	}
+																</p>
+																<p>
+																	<strong>
+																		Donation:
+																	</strong>{" "}
+																	$
+																	{
+																		transaction.donationAmount
+																	}
+																</p>
+															</div>
+															<div className="w-1/3">
+																<p>
+																	<strong>
+																		Vehicle
+																		Used:
+																	</strong>{" "}
+																	{transaction
+																		.vehicle
+																		?.value
+																		.combinedName ||
+																		"N/A"}
+																</p>
+																<p>
+																	<strong>
+																		Created
+																		By:
+																	</strong>{" "}
+																	{
+																		transaction
+																			.createdBy
+																			.value
+																			.characterName
+																	}
+																</p>
+															</div>
+														</div>
+													</CollapsibleContent>
+												</li>
+											</Collapsible>
+										);
+									})}
+							</CollapsibleGroup>
+						</ul>
+					</div>
 					<AddModal
 						transactions={transactions}
 						setTransactions={setTransactions}

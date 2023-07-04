@@ -27,7 +27,6 @@ export default function Profile() {
 			setPhoneNumber(user.phoneNumber);
 			setDiscord(user.discord);
 			setTimezone(user.timezone);
-			console.log("user: ", user);
 		} else if (!user) {
 			router.push("/login");
 		}
@@ -47,7 +46,6 @@ export default function Profile() {
 		);
 
 		if (results.success) {
-			console.log("resutsL ", results);
 			setUser(results.user);
 			toast.success("Profile has been updated.", {
 				toastId: "updateSuccess",
