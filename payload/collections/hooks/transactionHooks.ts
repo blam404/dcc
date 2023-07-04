@@ -147,8 +147,9 @@ export const fillRemainingBalance: CollectionBeforeChangeHook = async ({
 	originalDoc,
 }) => {
 	const { payload, user } = req;
+	const { from, to, date } = data;
+
 	if (operation === "create") {
-		const { from, to } = data;
 		const totalPayment = data.donationAmount + data.paymentAmount;
 
 		if (from.relationTo === "accounts") {
@@ -156,23 +157,54 @@ export const fillRemainingBalance: CollectionBeforeChangeHook = async ({
 				collection: from.relationTo,
 				id: from.value,
 			});
-			data.fromRemaining = account.balance - totalPayment;
+
+			const oldTransactions = await getOldTransactions(
+				payload,
+				from.value,
+				date
+			);
+
+			if (oldTransactions.length > 0) {
+				const previousTransaction = oldTransactions[0];
+				const previousRemaining =
+					previousTransaction.from.value === from.value
+						? previousTransaction.fromRemaining
+						: previousTransaction.toRemaining;
+				data.fromRemaining = previousRemaining - totalPayment;
+			} else {
+				data.fromRemaining = account.startingBalance - totalPayment;
+			}
 		} else {
 			data.fromRemaining = null;
 		}
-		if (data.to.relationTo === "accounts") {
+		if (to.relationTo === "accounts") {
 			const account = await payload.findByID({
 				collection: to.relationTo,
 				id: to.value,
 			});
-			data.toRemaining = account.balance + totalPayment;
+
+			const oldTransactions = await getOldTransactions(
+				payload,
+				to.value,
+				date
+			);
+
+			if (oldTransactions.length > 0) {
+				const previousTransaction = oldTransactions[0];
+				const previousRemaining =
+					previousTransaction.from.value === to.value
+						? previousTransaction.fromRemaining
+						: previousTransaction.toRemaining;
+				data.toRemaining = previousRemaining + totalPayment;
+			} else {
+				data.toRemaining = account.startingBalance + totalPayment;
+			}
 		} else {
 			data.toRemaining = null;
 		}
 
 		return data;
 	} else if (operation === "update") {
-		const { from, to } = data;
 		const fromOriginal = originalDoc.from;
 		const toOriginal = originalDoc.to;
 		const total = data.paymentAmount + data.donationAmount;
@@ -182,51 +214,20 @@ export const fillRemainingBalance: CollectionBeforeChangeHook = async ({
 		if (user) {
 			data.updatedBy = {
 				value: user.id,
-				relationTo: user.collection,
+				relationTo: "users",
 			};
 		}
 
+		//if not updated by the "bot" account to prevent infinite loop
+		//figure out a way to do this without hard coding an account
 		if (data.updatedBy.value !== "6492312d69e524c5ca439c7a") {
 			if (from?.value !== fromOriginal?.value) {
 				if (from?.relationTo === "accounts") {
-					const results = await payload.find({
-						collection: "transactions",
-						showHiddenFields: true,
-						where: {
-							and: [
-								{
-									or: [
-										{
-											"from.value": {
-												equals: from.value,
-											},
-										},
-										{
-											"to.value": {
-												equals: from.value,
-											},
-										},
-									],
-								},
-								{
-									date: {
-										less_than: data.date,
-									},
-								},
-							],
-						},
-						sort: "-date",
-						depth: 0,
-						user: {
-							id: "6492312d69e524c5ca439c7a",
-							characterName: "Bot",
-							email: "robot@dcc.com",
-							createdAt: "2023-06-20T23:07:25.596Z",
-							updatedAt: "2023-06-23T19:39:39.367Z",
-							roles: "editor",
-						},
-					});
-					const transactions = results.docs;
+					const transactions = await getOldTransactions(
+						payload,
+						from.value,
+						date
+					);
 
 					let previousBalance;
 					if (transactions.length > 0) {
@@ -252,44 +253,11 @@ export const fillRemainingBalance: CollectionBeforeChangeHook = async ({
 			}
 			if (to?.value !== toOriginal?.value) {
 				if (to?.relationTo === "accounts") {
-					const results = await payload.find({
-						collection: "transactions",
-						showHiddenFields: true,
-						where: {
-							and: [
-								{
-									or: [
-										{
-											"from.value": {
-												equals: to.value,
-											},
-										},
-										{
-											"to.value": {
-												equals: to.value,
-											},
-										},
-									],
-								},
-								{
-									date: {
-										less_than: data.date,
-									},
-								},
-							],
-						},
-						sort: "-date",
-						depth: 0,
-						user: {
-							id: "6492312d69e524c5ca439c7a",
-							characterName: "Bot",
-							email: "robot@dcc.com",
-							createdAt: "2023-06-20T23:07:25.596Z",
-							updatedAt: "2023-06-23T19:39:39.367Z",
-							roles: "editor",
-						},
-					});
-					const transactions = results.docs;
+					const transactions = await getOldTransactions(
+						payload,
+						to.value,
+						date
+					);
 
 					let previousBalance;
 					if (transactions.length > 0) {
@@ -326,9 +294,8 @@ export const fillRemainingBalance: CollectionBeforeChangeHook = async ({
 				}
 			}
 		}
+		return data;
 	}
-
-	return data;
 };
 
 export const updateAccounts: CollectionAfterChangeHook = async ({
@@ -337,38 +304,106 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 	operation,
 	previousDoc,
 }) => {
-	if (operation === "create") {
-		const { from, to } = doc;
-		const fromRemaining = doc.fromRemaining;
-		const toRemaining = doc.toRemaining;
+	const { from, to, date } = doc;
+	const total = doc.paymentAmount + doc.donationAmount;
 
-		if (fromRemaining) {
+	if (operation === "create") {
+		if (from.relationTo === "accounts") {
+			const transactions = await getNewTransactions(
+				payload,
+				from.value,
+				date
+			);
+
+			if (transactions.length > 0) {
+				transactions.forEach(async (transaction) => {
+					await payload.update({
+						collection: "transactions",
+						id: transaction.id,
+						data: {
+							fromRemaining:
+								transaction.from.value === from.value
+									? transaction.fromRemaining - total
+									: transaction.fromRemaining,
+							toRemaining:
+								transaction.to.value === from.value
+									? transaction.toRemaining - total
+									: transaction.toRemaining,
+							updatedBy: {
+								value: "6492312d69e524c5ca439c7a",
+								relationTo: "users",
+							},
+						},
+						user: botUser,
+					});
+				});
+			}
+
+			const account = await payload.findByID({
+				collection: "accounts",
+				id: from.value,
+			});
+
 			await payload.update({
-				collection: from.relationTo,
+				collection: "accounts",
 				id: from.value,
 				data: {
-					balance: fromRemaining,
+					balance: account.balance - total,
 				},
 			});
 		}
-		if (toRemaining) {
+		if (to.relationTo === "accounts") {
+			const transactions = await getNewTransactions(
+				payload,
+				to.value,
+				date
+			);
+
+			if (transactions.length > 0) {
+				transactions.forEach(async (transaction) => {
+					await payload.update({
+						collection: "transactions",
+						id: transaction.id,
+						data: {
+							fromRemaining:
+								transaction.from.value === to.value
+									? transaction.fromRemaining + total
+									: transaction.fromRemaining,
+							toRemaining:
+								transaction.to.value === to.value
+									? transaction.toRemaining + total
+									: transaction.toRemaining,
+							updatedBy: {
+								value: "6492312d69e524c5ca439c7a",
+								relationTo: "users",
+							},
+						},
+						user: botUser,
+					});
+				});
+			}
+
+			const account = await payload.findByID({
+				collection: "accounts",
+				id: to.value,
+			});
+
 			await payload.update({
-				collection: to.relationTo,
+				collection: "accounts",
 				id: to.value,
 				data: {
-					balance: toRemaining,
+					balance: account.balance + total,
 				},
 			});
 		}
 	} else if (operation === "update") {
-		const { from, to } = doc;
 		const fromOriginal = previousDoc.from;
 		const toOriginal = previousDoc.to;
-		const total = doc.paymentAmount + doc.donationAmount;
 		const totalOriginal =
 			previousDoc.paymentAmount + previousDoc.donationAmount;
 		const difference = totalOriginal - total;
 
+		//this checks for the "bot" account when depth=0 and depth=1
 		if (
 			doc.updatedBy.value !== "6492312d69e524c5ca439c7a" &&
 			doc.updatedBy.value?.id !== "6492312d69e524c5ca439c7a"
@@ -398,44 +433,11 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 				}
 
 				addBack.forEach(async (accountId) => {
-					const results = await payload.find({
-						collection: "transactions",
-						showHiddenFields: true,
-						where: {
-							and: [
-								{
-									or: [
-										{
-											"from.value": {
-												equals: accountId,
-											},
-										},
-										{
-											"to.value": {
-												equals: accountId,
-											},
-										},
-									],
-								},
-								{
-									date: {
-										greater_than: doc.date,
-									},
-								},
-							],
-						},
-						sort: "+date",
-						depth: 0,
-						user: {
-							id: "6492312d69e524c5ca439c7a",
-							characterName: "Bot",
-							email: "robot@dcc.com",
-							createdAt: "2023-06-20T23:07:25.596Z",
-							updatedAt: "2023-06-23T19:39:39.367Z",
-							roles: "editor",
-						},
-					});
-					const transactions = results.docs;
+					const transactions = await getNewTransactions(
+						payload,
+						accountId,
+						date
+					);
 
 					if (transactions.length > 0) {
 						transactions.forEach(async (transaction) => {
@@ -460,14 +462,7 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 										relationTo: "users",
 									},
 								},
-								user: {
-									id: "6492312d69e524c5ca439c7a",
-									characterName: "Bot",
-									email: "robot@dcc.com",
-									createdAt: "2023-06-20T23:07:25.596Z",
-									updatedAt: "2023-06-23T19:39:39.367Z",
-									roles: "editor",
-								},
+								user: botUser,
 							});
 						});
 					}
@@ -486,36 +481,11 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 				});
 
 				subtractFrom.forEach(async (accountId) => {
-					const results = await payload.find({
-						collection: "transactions",
-						showHiddenFields: true,
-						where: {
-							and: [
-								{
-									or: [
-										{
-											"from.value": {
-												equals: accountId,
-											},
-										},
-										{
-											"to.value": {
-												equals: accountId,
-											},
-										},
-									],
-								},
-								{
-									date: {
-										greater_than: doc.date,
-									},
-								},
-							],
-						},
-						sort: "+date",
-						depth: 0,
-					});
-					const transactions = results.docs;
+					const transactions = await getNewTransactions(
+						payload,
+						accountId,
+						date
+					);
 
 					if (transactions.length > 0) {
 						transactions.forEach(async (transaction) => {
@@ -540,14 +510,7 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 										relationTo: "users",
 									},
 								},
-								user: {
-									id: "6492312d69e524c5ca439c7a",
-									characterName: "Bot",
-									email: "robot@dcc.com",
-									createdAt: "2023-06-20T23:07:25.596Z",
-									updatedAt: "2023-06-23T19:39:39.367Z",
-									roles: "editor",
-								},
+								user: botUser,
 							});
 						});
 					}
@@ -572,46 +535,14 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 				total !== totalOriginal
 			) {
 				if (from.relationTo === "accounts") {
-					const results = await payload.find({
-						collection: "transactions",
-						showHiddenFields: true,
-						where: {
-							and: [
-								{
-									or: [
-										{
-											"from.value": {
-												equals: from.value,
-											},
-										},
-										{
-											"to.value": {
-												equals: from.value,
-											},
-										},
-									],
-								},
-								{
-									date: {
-										greater_than: doc.date,
-									},
-								},
-							],
-						},
-						sort: "+date",
-						depth: 0,
-						user: {
-							id: "6492312d69e524c5ca439c7a",
-							characterName: "Bot",
-							email: "robot@dcc.com",
-							createdAt: "2023-06-20T23:07:25.596Z",
-							updatedAt: "2023-06-23T19:39:39.367Z",
-							roles: "editor",
-						},
-					});
-					const transactions = results.docs;
+					const transactions = await getNewTransactions(
+						payload,
+						from.value,
+						date
+					);
+
 					transactions.forEach(async (transaction) => {
-						const query = {
+						await payload.update({
 							collection: "transactions",
 							id: transaction.id,
 							data: {
@@ -629,17 +560,8 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 								},
 							},
 							depth: 0,
-							user: {
-								id: "6492312d69e524c5ca439c7a",
-								characterName: "Bot",
-								email: "robot@dcc.com",
-								createdAt: "2023-06-20T23:07:25.596Z",
-								updatedAt: "2023-06-23T19:39:39.367Z",
-								roles: "editor",
-							},
-						};
-
-						const asdf = await payload.update(query);
+							user: botUser,
+						});
 					});
 
 					const account = await payload.findByID({
@@ -647,59 +569,24 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 						id: from.value,
 					});
 
-					const query = {
-						balance: account.balance + difference,
-					};
-
 					await payload.update({
 						collection: "accounts",
 						id: from.value,
-						data: query,
+						data: {
+							balance: account.balance + difference,
+						},
 					});
 				}
 
 				if (to.relationTo === "accounts") {
-					const results = await payload.find({
-						collection: "transactions",
-						showHiddenFields: true,
-						where: {
-							and: [
-								{
-									or: [
-										{
-											"from.value": {
-												equals: to.value,
-											},
-										},
-										{
-											"to.value": {
-												equals: to.value,
-											},
-										},
-									],
-								},
-								{
-									date: {
-										greater_than: doc.date,
-									},
-								},
-							],
-						},
-						sort: "+date",
-						depth: 0,
-						user: {
-							id: "6492312d69e524c5ca439c7a",
-							characterName: "Bot",
-							email: "robot@dcc.com",
-							createdAt: "2023-06-20T23:07:25.596Z",
-							updatedAt: "2023-06-23T19:39:39.367Z",
-							roles: "editor",
-						},
-					});
-					const transactions = results.docs;
+					const transactions = await getNewTransactions(
+						payload,
+						to.value,
+						date
+					);
 
 					transactions.forEach(async (transaction) => {
-						const query = {
+						await payload.update({
 							collection: "transactions",
 							id: transaction.id,
 							data: {
@@ -717,24 +604,15 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 								},
 							},
 							depth: 0,
-							user: {
-								id: "6492312d69e524c5ca439c7a",
-								characterName: "Bot",
-								email: "robot@dcc.com",
-								createdAt: "2023-06-20T23:07:25.596Z",
-								updatedAt: "2023-06-23T19:39:39.367Z",
-								roles: "editor",
-							},
-						};
-
-						const asdf = await payload.update(query);
+							user: botUser,
+						});
 					});
 
 					const account = await payload.findByID({
 						collection: "accounts",
 						id: to.value,
 					});
-					const accResult = await payload.update({
+					await payload.update({
 						collection: "accounts",
 						id: account.id,
 						data: {
@@ -747,6 +625,92 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 	}
 };
 
-/* updateAccounts operation === update original
-} 
-*/
+const getOldTransactions = async (payload, id, date) => {
+	const oldTransactions = await payload.find({
+		collection: "transactions",
+		where: {
+			and: [
+				{
+					or: [
+						{
+							"from.value": {
+								equals: id,
+							},
+						},
+						{
+							"to.value": {
+								equals: id,
+							},
+						},
+					],
+				},
+				{
+					date: {
+						less_than: date,
+					},
+				},
+			],
+		},
+		sort: "-date",
+		depth: 0,
+		user: {
+			id: "6492312d69e524c5ca439c7a",
+			characterName: "Bot",
+			email: "robot@dcc.com",
+			createdAt: "2023-06-20T23:07:25.596Z",
+			updatedAt: "2023-06-23T19:39:39.367Z",
+			roles: "editor",
+		},
+	});
+	return oldTransactions.docs;
+};
+
+const getNewTransactions = async (payload, id, date) => {
+	const oldTransactions = await payload.find({
+		collection: "transactions",
+		where: {
+			and: [
+				{
+					or: [
+						{
+							"from.value": {
+								equals: id,
+							},
+						},
+						{
+							"to.value": {
+								equals: id,
+							},
+						},
+					],
+				},
+				{
+					date: {
+						greater_than: date,
+					},
+				},
+			],
+		},
+		sort: "+date",
+		depth: 0,
+		user: {
+			id: "6492312d69e524c5ca439c7a",
+			characterName: "Bot",
+			email: "robot@dcc.com",
+			createdAt: "2023-06-20T23:07:25.596Z",
+			updatedAt: "2023-06-23T19:39:39.367Z",
+			roles: "editor",
+		},
+	});
+	return oldTransactions.docs;
+};
+
+const botUser = {
+	id: "6492312d69e524c5ca439c7a",
+	collection: "users",
+	characterName: "Bot",
+	email: "robot@dcc.com",
+	createdAt: "2023-06-20T23:07:25.596Z",
+	updatedAt: "2023-06-23T19:39:39.367Z",
+	roles: "editor",
+};
