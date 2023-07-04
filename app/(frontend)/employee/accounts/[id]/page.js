@@ -143,14 +143,6 @@ export default function Account({ params }) {
 													}`}
 												>
 													<div className="w-9/12">
-														<p className="text-sm">
-															{format(
-																new Date(
-																	transaction.date
-																),
-																"LLL d, y"
-															)}
-														</p>
 														<p>
 															{capFirstLetter(
 																transaction.transactionType
@@ -158,6 +150,14 @@ export default function Account({ params }) {
 															:{" "}
 															{parseType(
 																transaction
+															)}
+														</p>
+														<p className="text-sm text-neutral-400">
+															{format(
+																new Date(
+																	transaction.date
+																),
+																"LLL d, y"
 															)}
 														</p>
 													</div>
@@ -173,11 +173,110 @@ export default function Account({ params }) {
 															{transaction.paymentAmount +
 																transaction.donationAmount}
 														</p>
-														<p className="text-sm">
+														<p className="text-sm text-neutral-400">
 															${remaining}
 														</p>
 													</div>
-													<div className="w-1/12"></div>
+													<div className="w-1/12 flex justify-end">
+														<CollapsibleToggler>
+															<FaChevronDown className="mx-2 cursor-pointer" />
+														</CollapsibleToggler>
+													</div>
+													<CollapsibleContent className="w-full text-sm">
+														<hr className="h-[1px] border border-dashed border-neutral-400 my-2 w-full" />
+														<div className="w-full flex flex-wrap justify-center">
+															<div className="w-1/4">
+																<p>
+																	<strong>
+																		From:
+																	</strong>{" "}
+																	{transaction
+																		.from
+																		.value
+																		.companyName ||
+																		transaction
+																			.from
+																			.value
+																			.accountName ||
+																		transaction
+																			.from
+																			.value
+																			.characterName}
+																</p>
+																<p>
+																	<strong>
+																		To:
+																	</strong>{" "}
+																	{transaction
+																		.to
+																		.value
+																		.companyName ||
+																		transaction
+																			.to
+																			.value
+																			.accountName ||
+																		transaction
+																			.to
+																			.value
+																			.characterName}
+																</p>
+															</div>
+															<div className="w-1/4">
+																<p>
+																	<strong>
+																		Payment:
+																	</strong>{" "}
+																	$
+																	{
+																		transaction.paymentAmount
+																	}
+																</p>
+																<p>
+																	<strong>
+																		Donation:
+																	</strong>{" "}
+																	$
+																	{
+																		transaction.donationAmount
+																	}
+																</p>
+															</div>
+															<div className="w-1/4">
+																<p>
+																	<strong>
+																		Vehicle:
+																	</strong>{" "}
+																	{transaction
+																		.vehicle
+																		?.value
+																		.combinedName ||
+																		"N/A"}
+																</p>
+																<p>
+																	<strong>
+																		Created
+																		By:
+																	</strong>{" "}
+																	{
+																		transaction
+																			.createdBy
+																			.value
+																			.characterName
+																	}
+																</p>
+															</div>
+															<div className="w-1/4">
+																<p>
+																	<strong>
+																		Notes:
+																	</strong>{" "}
+																	{
+																		transaction.notes
+																	}
+																</p>
+															</div>
+														</div>
+													</CollapsibleContent>
 												</li>
 											</Collapsible>
 										);

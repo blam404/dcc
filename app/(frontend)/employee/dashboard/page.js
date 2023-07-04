@@ -226,7 +226,7 @@ export default function Dashboard() {
 															<FaChevronDown className="mx-2 cursor-pointer" />
 														</CollapsibleToggler>
 													</div>
-													<CollapsibleContent className="w-full">
+													<CollapsibleContent className="w-full text-sm">
 														<hr className="h-[1px] border border-dashed border-neutral-400 my-2 w-full" />
 														<div className="w-full flex flex-wrap justify-center">
 															<div className="w-1/3">
