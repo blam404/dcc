@@ -12,11 +12,16 @@ import {
 import { format } from "date-fns";
 
 import getRecords from "../../../../../utils/getRecords";
-import getDocs from "./getDocs";
+import getAccTransactions from "./getAccTransactions";
 import capFirstLetter from "../../../../../utils/capFirstLetter";
 import { UserContext } from "../../../../../components/Providers";
 
-import { FaChevronDown, FaSpinner } from "react-icons/fa";
+import {
+	FaChevronDown,
+	FaChevronLeft,
+	FaChevronRight,
+	FaSpinner,
+} from "react-icons/fa";
 
 export async function generateStaticParams() {
 	const accounts = await getRecords(null, true, "accounts");
@@ -32,6 +37,8 @@ export default function Account({ params }) {
 	const [loading, setLoading] = useState(true);
 	const [transactions, setTransaction] = useState([]);
 	const [account, setAccount] = useState({});
+	const [meta, setMeta] = useState({});
+	const [page, setPage] = useState(1);
 
 	const { user } = useContext(UserContext);
 	const router = useRouter();
@@ -39,10 +46,11 @@ export default function Account({ params }) {
 	useEffect(() => {
 		if (user) {
 			const getTheThing = async () => {
-				const results = await getDocs(params.id);
+				const results = await getAccTransactions(params.id);
 				if (results.success) {
-					setTransaction(results.transactions);
+					setTransaction(results.transactions.docs);
 					setAccount(results.account);
+					setMeta(results.transactions);
 					setLoading(false);
 				} else if (results.error) {
 					setLoading(false);
@@ -56,6 +64,58 @@ export default function Account({ params }) {
 			router.push("/login");
 		}
 	}, [user]);
+
+	const Pages = () => {
+		const pageNum = [];
+
+		let count = -2;
+		while (pageNum.length < 5 && page + count <= meta.totalPages) {
+			if (page + count > 0) {
+				pageNum.push(page + count);
+			}
+			count++;
+		}
+
+		const goToPage = async (newPage) => {
+			setLoading(true);
+			const results = await getAccTransactions(params.id, 10, newPage);
+			setTransaction(results.transactions.docs);
+			setMeta(results.transactions);
+			setLoading(false);
+			setPage(newPage);
+		};
+
+		return (
+			<div className="pt-4 flex justify-center">
+				{meta.hasPrevPage && (
+					<button
+						onClick={() => goToPage(meta.prevPage)}
+						className="py-1 px-3 rounded-md bg-amber-300 mx-1"
+					>
+						<FaChevronLeft className="h-4 w-4" />
+					</button>
+				)}
+				{pageNum.map((number) => (
+					<button
+						key={number}
+						onClick={() => goToPage(number)}
+						disabled={number === page}
+						className="py-1 px-3 rounded-md bg-amber-300 mx-1"
+					>
+						{number}
+					</button>
+				))}
+				{meta.hasNextPage && (
+					<button
+						onClick={() => goToPage(meta.nextPage)}
+						className="py-1 px-3 rounded-md bg-amber-300 mx-1"
+					>
+						<FaChevronRight className="h-4 w-4" />
+					</button>
+				)}
+			</div>
+		);
+	};
 
 	const parseType = (transaction) => {
 		const type =
@@ -283,6 +343,7 @@ export default function Account({ params }) {
 									})}
 							</CollapsibleGroup>
 						</ul>
+						<Pages />
 					</div>
 				</div>
 			)}

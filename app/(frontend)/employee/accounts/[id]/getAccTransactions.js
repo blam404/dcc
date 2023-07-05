@@ -2,7 +2,7 @@
 
 import { getPayloadClient } from "../../../../../payload/payloadClient";
 
-const getDocs = async (id) => {
+const getAccTransactions = async (id, limit = 10, page) => {
 	const payload = await getPayloadClient();
 
 	try {
@@ -30,11 +30,13 @@ const getDocs = async (id) => {
 			sort: "-date",
 			depth: 1,
 			overrideAccess: true,
+			limit,
+			page: page || 1,
 		});
-		return { success: true, transactions: transactions.docs, account };
+		return { success: true, transactions: transactions, account };
 	} catch (error) {
 		return { error: error.message };
 	}
 };
 
-export default getDocs;
+export default getAccTransactions;

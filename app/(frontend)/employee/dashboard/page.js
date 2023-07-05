@@ -135,7 +135,7 @@ export default function Dashboard() {
 											</strong>
 										</h2>
 										<div>${account.balance}</div>
-										<div>
+										<div className="text-neutral-400 text-sm">
 											<Link
 												href={`/employee/accounts/${account.id}`}
 											>
@@ -288,8 +288,7 @@ export default function Dashboard() {
 															<div className="w-1/3">
 																<p>
 																	<strong>
-																		Vehicle
-																		Used:
+																		Vehicle:
 																	</strong>{" "}
 																	{transaction
 																		.vehicle
