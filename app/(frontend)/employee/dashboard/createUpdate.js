@@ -2,9 +2,10 @@
 
 import { getPayloadClient } from "../../../../payload/payloadClient";
 
-const createTransaction = async (info, user) => {
+const createUpdate = async (info, user) => {
 	const payload = await getPayloadClient();
 	const {
+		id,
 		date,
 		transactionType,
 		secondType,
@@ -38,38 +39,58 @@ const createTransaction = async (info, user) => {
 		expenseType = secondType;
 	}
 
+	const data = {
+		date,
+		transactionType,
+		revenueType,
+		donationType,
+		expenseType,
+		expenseOther,
+		noOfPassenger,
+		paymentAmount,
+		donationAmount,
+		from,
+		to,
+		notes,
+		vehicle,
+		createdBy,
+		updatedBy,
+	};
+
 	try {
-		const results = await payload.create({
-			collection: "transactions",
-			data: {
-				date,
-				transactionType,
-				revenueType,
-				donationType,
-				expenseType,
-				expenseOther,
-				noOfPassenger,
-				paymentAmount,
-				donationAmount,
-				from,
-				to,
-				notes,
-				vehicle,
-				createdBy,
-				updatedBy,
-			},
-			user,
-			overrideAccess: false,
-			depth: 0,
-		});
-		return {
-			success: results,
-		};
+		if (id) {
+			console.log("updating");
+			const results = await payload.update({
+				collection: "transactions",
+				id,
+				data,
+				user,
+				overrideAccess: false,
+				depth: 0,
+			});
+
+			return {
+				success: results,
+			};
+		} else {
+			console.log("creating");
+			const results = await payload.create({
+				collection: "transactions",
+				data,
+				user,
+				overrideAccess: false,
+				depth: 0,
+			});
+			return {
+				success: results,
+			};
+		}
 	} catch (error) {
+		console.log("error: ", error.message);
 		return {
 			error: error.message,
 		};
 	}
 };
 
-export default createTransaction;
+export default createUpdate;

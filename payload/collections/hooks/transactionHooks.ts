@@ -286,14 +286,16 @@ export const fillRemainingBalance: CollectionBeforeChangeHook = async ({
 				total !== totalOriginal
 			) {
 				const difference = total - totalOriginal;
+
 				if (from?.relationTo === "accounts") {
-					data.fromRemaining -= difference;
+					data.fromRemaining = originalDoc.fromRemaining - difference;
 				}
 				if (to?.relationTo === "accounts") {
-					data.toRemaining += difference;
+					data.toRemaining = originalDoc.toRemaining + difference;
 				}
 			}
 		}
+
 		return data;
 	}
 };

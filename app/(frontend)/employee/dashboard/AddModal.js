@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useContext, useEffect, useState, useTransition } from "react";
-import { revalidatePath } from "next/cache";
 import { Modal, useModal } from "@faceless-ui/modal";
 import { format } from "date-fns";
 import DatePicker from "react-datepicker";
@@ -10,7 +9,7 @@ import { toast } from "react-toastify";
 
 import { UserContext } from "../../../../components/Providers";
 import getRecords from "../../../../utils/getRecords";
-import createTransaction from "../dashboard/createTransaction";
+import createUpdate from "./createUpdate";
 
 import { FaSpinner } from "react-icons/fa";
 
@@ -96,11 +95,11 @@ const expenseType = [
 	},
 ];
 
-export default function AddModal({ transactions, setTransactions }) {
+export default function AddModal({ transactions, setTransactions, editing }) {
 	const [pending, startTransition] = useTransition();
 	const [date, setDate] = useState(new Date());
 	const [transType, setTransType] = useState("");
-	const [secondType, setSecondType] = useState(null);
+	const [secondType, setSecondType] = useState(0);
 	const [other, setOther] = useState(null);
 	const [numPassenger, setNumPassenger] = useState("");
 	const [from, setFrom] = useState(0);
@@ -214,6 +213,61 @@ export default function AddModal({ transactions, setTransactions }) {
 		}
 	}, [transType, secondType]);
 
+	useEffect(() => {
+		if (editing) {
+			setDate(new Date(editing.date));
+			setTransType(editing.transactionType);
+			setSecondType(
+				editing.revenueType ||
+					editing.donationType ||
+					editing.expenseType
+			);
+			setOther(editing.expenseOther);
+			setNumPassenger(editing.noOfPassenger);
+			setPayment(editing.paymentAmount);
+			setDonation(editing.donationAmount);
+			setNotes(editing.notes || "");
+			// need to find vehicle, from, and to
+
+			if (editing.vehicle) {
+				const vehicleIndex = vehicleList.findIndex(
+					(vehicle) => vehicle.id === editing.vehicle.value.id
+				);
+				setVehicle(`vehicle:${vehicleIndex}`);
+			}
+
+			if (from.relationTo === "accounts") {
+				const fromIndex = accountList.findIndex(
+					(account) => account.id === editing.from.value.id
+				);
+				setFrom(`account:${fromIndex}`);
+			} else if (from.relationTo === "companies") {
+				const fromIndex = company.findIndex(
+					(company) => company.id === editing.from.value.id
+				);
+				setFrom(`company:${fromIndex}`);
+			} else if (from.relationTo === "user") {
+				setFrom("user");
+			}
+
+			if (to.relationTo === "accounts") {
+				const toIndex = accountList.findIndex(
+					(account) => account.id === editing.to.value.id
+				);
+				setTo(`account:${toIndex}`);
+			} else if (to.relationTo === "companies") {
+				const toIndex = company.findIndex(
+					(company) => company.id === editing.from.value.id
+				);
+				setTo(`company:${toIndex}`);
+			} else if (to.relationTo === "user") {
+				setTo("user");
+			}
+		} else {
+			resetFields();
+		}
+	}, [editing]);
+
 	const resetFields = () => {
 		setDate(new Date());
 		setTransType("");
@@ -248,66 +302,90 @@ export default function AddModal({ transactions, setTransactions }) {
 			payment >= 0 &&
 			donation >= 0;
 
-		if (canSubmit) {
-			const getRelation = (info) => {
-				switch (info[0]) {
-					case "account":
-						return {
-							value: accountList[info[1]].id,
-							relationTo: "accounts",
-						};
-					case "company":
-						return {
-							value: companyList[info[1]].id,
-							relationTo: "companies",
-						};
-					case "vehicle":
-						return {
-							value: vehicleList[info[1]].id,
-							relationTo: "vehicles",
-						};
-					case "user":
-						return {
-							value: user.id,
-							relationTo: "users",
-						};
-				}
-			};
+		const getRelation = (info) => {
+			switch (info[0]) {
+				case "account":
+					return {
+						value: accountList[info[1]].id,
+						relationTo: "accounts",
+					};
+				case "company":
+					return {
+						value: companyList[info[1]].id,
+						relationTo: "companies",
+					};
+				case "vehicle":
+					return {
+						value: vehicleList[info[1]].id,
+						relationTo: "vehicles",
+					};
+				case "user":
+					return {
+						value: user.id,
+						relationTo: "users",
+					};
+			}
+		};
 
-			const results = await createTransaction(
-				{
-					date: format(date, "yyyy-MM-dd'T'kk:mm:ss.SSSXXX"),
-					transactionType: transType,
-					secondType,
-					expenseOther: other,
-					noOfPassenger: Number(numPassenger),
-					paymentAmount: Number(payment),
-					donationAmount: Number(donation),
-					from: getRelation(fromInfo),
-					to: getRelation(toInfo),
-					notes: notes.length > 0 ? notes : null,
-					vehicle: vehicle ? getRelation(vehicle.split(":")) : null,
-					createdBy: {
-						value: user.id,
-						relationTo: "users",
-					},
-					updatedBy: {
-						value: user.id,
-						relationTo: "users",
-					},
+		const data = {
+			id: editing?.id || null,
+			date: format(date, "yyyy-MM-dd'T'kk:mm:ss.SSSXXX"),
+			transactionType: transType,
+			secondType,
+			expenseOther: other,
+			noOfPassenger: Number(numPassenger),
+			paymentAmount: Number(payment),
+			donationAmount: Number(donation),
+			from: getRelation(fromInfo),
+			to: getRelation(toInfo),
+			notes: notes.length > 0 ? notes : null,
+			vehicle: vehicle ? getRelation(vehicle.split(":")) : null,
+			createdBy: {
+				value: user.id,
+				relationTo: "users",
+			},
+			updatedBy: {
+				value: user.id,
+				relationTo: "users",
+			},
+		};
+
+		const results = await createUpdate(data, user);
+
+		if (results.success) {
+			resetFields();
+			toggleModal("addTransaction");
+			results.success.createdBy = {
+				value: {
+					characterName: user.characterName,
 				},
-				user
-			);
+			};
+		}
 
+		if (canSubmit && editing) {
 			if (results.success) {
-				resetFields();
-				toggleModal("addTransaction");
-				results.success.createdBy = {
-					value: {
-						characterName: user.characterName,
-					},
-				};
-
+				const updated = [...transactions];
+				const transactionIndex = transactions.findIndex(
+					(transaction) => transaction.id === editing.id
+				);
+				updated[transactionIndex] = results.success;
+				setTransactions(updated);
+				toast.success("Transaction successfully updated.", {
+					toastId: "transactionSuccess",
+				});
+			} else if (results.error) {
+				toast.error(
+					"Error updating transaction. Try again or contact the admin if the problem persists",
+					{
+						toastId: "transactionError",
+					}
+				);
+				toast.error(`Error message: ${results.error}`, {
+					toastId: "errorMessage",
+				});
+			}
+		} else if (canSubmit && !editing) {
+			if (results.success) {
 				const added = [results.success, ...transactions];
 				// sorting in case transaction is back dated
 				added.sort(
@@ -378,9 +456,9 @@ export default function AddModal({ transactions, setTransactions }) {
 									onChange={(e) =>
 										setSecondType(e.target.value)
 									}
-									defaultValue={0}
+									value={secondType}
 								>
-									<option disabled value={0}>
+									<option disabled={secondType} value={0}>
 										-- select an option --
 									</option>
 									{revenueType.map((type) => (
@@ -410,9 +488,9 @@ export default function AddModal({ transactions, setTransactions }) {
 							<div>Donation Type</div>
 							<select
 								onChange={(e) => setSecondType(e.target.value)}
-								defaultValue={0}
+								value={secondType}
 							>
-								<option disabled value={0}>
+								<option disabled={secondType} value={0}>
 									-- select an option --
 								</option>
 								{donationType.map((type) => (
@@ -431,9 +509,9 @@ export default function AddModal({ transactions, setTransactions }) {
 									onChange={(e) =>
 										setSecondType(e.target.value)
 									}
-									defaultValue={0}
+									value={secondType}
 								>
-									<option disabled value={0}>
+									<option disabled={secondType} value={0}>
 										-- select an option --
 									</option>
 									{expenseType.map((type) => (
@@ -598,6 +676,8 @@ export default function AddModal({ transactions, setTransactions }) {
 								>
 									{pending ? (
 										<FaSpinner className="animate-spin h-6 w-6" />
+									) : editing ? (
+										"Update"
 									) : (
 										"Submit"
 									)}

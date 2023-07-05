@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
-import { ModalToggler } from "@faceless-ui/modal";
+import { useModal } from "@faceless-ui/modal";
 import { toast } from "react-toastify";
 import {
 	Collapsible,
@@ -24,9 +24,11 @@ export default function Dashboard() {
 	const [loading, setLoading] = useState(true);
 	const [transactions, setTransactions] = useState([]);
 	const [accounts, setAccounts] = useState([]);
+	const [editing, setEditing] = useState(null);
 
 	const { user } = useContext(UserContext);
 	const router = useRouter();
+	const { toggleModal } = useModal();
 
 	useEffect(() => {
 		if (user) {
@@ -168,12 +170,14 @@ export default function Dashboard() {
 									<strong>Notes</strong>
 								</div>
 								<div className="w-1/12 flex justify-end">
-									<ModalToggler
-										slug="addTransaction"
-										className="py-1 px-2 bg-amber-100 rounded"
-									>
-										<FaPlus />
-									</ModalToggler>
+									<button className="py-1 px-2 bg-amber-100 rounded">
+										<FaPlus
+											onClick={() => {
+												setEditing(null);
+												toggleModal("addTransaction");
+											}}
+										/>
+									</button>
 								</div>
 							</li>
 							{transactions.length === 0 && (
@@ -221,7 +225,17 @@ export default function Dashboard() {
 														{transaction.notes}
 													</div>
 													<div className="w-1/12 flex justify-end">
-														{/* <FaPen className="mx-2" /> */}
+														<FaPen
+															className="mx-2 cursor-pointer"
+															onClick={() => {
+																setEditing(
+																	transaction
+																),
+																	toggleModal(
+																		"addTransaction"
+																	);
+															}}
+														/>
 														<CollapsibleToggler>
 															<FaChevronDown className="mx-2 cursor-pointer" />
 														</CollapsibleToggler>
@@ -321,6 +335,7 @@ export default function Dashboard() {
 					<AddModal
 						transactions={transactions}
 						setTransactions={setTransactions}
+						editing={editing}
 					/>
 				</div>
 			)}
