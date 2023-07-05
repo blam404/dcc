@@ -59,7 +59,6 @@ const createUpdate = async (info, user) => {
 
 	try {
 		if (id) {
-			console.log("updating");
 			const results = await payload.update({
 				collection: "transactions",
 				id,
@@ -73,7 +72,6 @@ const createUpdate = async (info, user) => {
 				success: results,
 			};
 		} else {
-			console.log("creating");
 			const results = await payload.create({
 				collection: "transactions",
 				data,
@@ -86,7 +84,6 @@ const createUpdate = async (info, user) => {
 			};
 		}
 	} catch (error) {
-		console.log("error: ", error.message);
 		return {
 			error: error.message,
 		};
