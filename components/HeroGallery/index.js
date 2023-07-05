@@ -30,7 +30,7 @@ export default function HeroGallery({
 						<Slide index={index} key={index} role="group">
 							<Image
 								src={image}
-								alt="Downtown Cap Co Slideshow"
+								alt="Downtown Cab Co Slideshow"
 								width="0"
 								height="0"
 								sizes="100vw"

@@ -15,7 +15,7 @@ export default function Footer() {
 					PrototypeM
 				</div>
 				<div className="mt-4 text-sm">
-					Copyright 2023 Downtown Cap Co.
+					Copyright 2023 Downtown Cab Co.
 				</div>
 			</div>
 		</div>
