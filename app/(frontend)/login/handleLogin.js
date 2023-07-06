@@ -20,6 +20,12 @@ const handleLogin = async (email, password) => {
 			expires: new Date(result.exp * 1000),
 			sameSite: "strict",
 		});
+		cookies().set({
+			name: "payload-roles",
+			value: result.user.roles,
+			expires: new Date(result.exp * 1000),
+			sameSite: "strict",
+		});
 		return { success: true, user: result.user };
 	} catch (error) {
 		return { error: error.message };

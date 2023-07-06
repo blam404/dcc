@@ -60,8 +60,6 @@ export default function Account({ params }) {
 				}
 			};
 			getTheThing();
-		} else {
-			router.push("/login");
 		}
 	}, [user]);
 

@@ -6,6 +6,12 @@ const handleLogOut = () => {
 	cookies().set({
 		name: "payload-token",
 		value: null,
+		maxAge: -1,
+	});
+	cookies().set({
+		name: "payload-roles",
+		value: null,
+		maxAge: -1,
 	});
 };
 

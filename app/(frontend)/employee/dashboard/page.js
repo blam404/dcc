@@ -70,8 +70,6 @@ export default function Dashboard() {
 				};
 				getAccounts();
 			}
-		} else {
-			router.push("/login");
 		}
 	}, [user]);
 
