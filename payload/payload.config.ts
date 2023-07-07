@@ -1,7 +1,6 @@
 import path from "path";
 import { buildConfig } from "payload/config";
 import { Users } from "./collections/Users";
-import { Roles } from "./collections/Roles";
 import { Documentation } from "./collections/Documentation";
 import { Accounts } from "./collections/Accounts";
 import { Companies } from "./collections/Companies";
@@ -16,7 +15,6 @@ export default buildConfig({
 		Accounts,
 		Companies,
 		Documentation,
-		Roles,
 		Transactions,
 		Users,
 		Vehicles,
@@ -25,6 +23,6 @@ export default buildConfig({
 		// Your globals here
 	],
 	typescript: {
-		outputFile: path.resolve(__dirname, "../payload-types.ts"),
+		outputFile: path.resolve(__dirname, "../types/Payload.types.ts"),
 	},
 });

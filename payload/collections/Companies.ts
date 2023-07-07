@@ -29,6 +29,7 @@ export const Companies: CollectionConfig = {
 			name: "companyName",
 			label: "Company Name",
 			type: "text",
+			required: true,
 		},
 		{
 			name: "bankAccount",

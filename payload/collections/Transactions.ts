@@ -271,6 +271,7 @@ export const Transactions: CollectionConfig = {
 			name: "from",
 			label: "From",
 			type: "relationship",
+			required: true,
 			relationTo: ["accounts", "companies", "users"],
 			admin: {
 				width: "47.5%",
@@ -287,6 +288,7 @@ export const Transactions: CollectionConfig = {
 			name: "to",
 			label: "To",
 			type: "relationship",
+			required: true,
 			relationTo: ["accounts", "companies", "users"],
 			admin: {
 				width: "47.5%",
@@ -363,6 +365,7 @@ export const Transactions: CollectionConfig = {
 			name: "createdBy",
 			label: "Created By",
 			type: "relationship",
+			required: true,
 			relationTo: ["users"],
 			defaultValue: ({ user }) => ({
 				value: user.id,

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useEffect, useState, useTransition } from "react";
+import React, { useContext, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
@@ -14,7 +14,7 @@ export default function Login() {
 	const [password, setPassword] = useState("");
 	const [pending, startTransition] = useTransition();
 	const router = useRouter();
-	const { user, setUser } = useContext(UserContext);
+	const { setUser } = useContext(UserContext);
 
 	const login = async () => {
 		if (!email || !password) {

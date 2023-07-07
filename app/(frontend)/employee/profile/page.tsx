@@ -11,7 +11,7 @@ import { FaSpinner } from "react-icons/fa";
 
 export default function Profile() {
 	const [characterName, setCharacterName] = useState("");
-	const [bankAccount, setBackAccount] = useState("");
+	const [bankAccount, setBankAccount] = useState("");
 	const [phoneNumber, setPhoneNumber] = useState("");
 	const [discord, setDiscord] = useState("");
 	const [timezone, setTimezone] = useState("");
@@ -23,12 +23,10 @@ export default function Profile() {
 	useEffect(() => {
 		if (user) {
 			setCharacterName(user.characterName);
-			setBackAccount(user.bankAccount);
+			setBankAccount(user.bankAccount);
 			setPhoneNumber(user.phoneNumber);
 			setDiscord(user.discord);
 			setTimezone(user.timezone);
-		} else if (!user) {
-			router.push("/login");
 		}
 	}, [user]);
 

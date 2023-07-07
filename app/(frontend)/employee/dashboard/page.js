@@ -118,7 +118,7 @@ export default function Dashboard() {
 			)}
 			{!loading && (
 				<div className="container mx-auto">
-					{["admin", "editor"].includes(user.roles) && (
+					{["admin", "editor"].includes(user?.roles) && (
 						<div className="w-3/4 mx-auto">
 							<h1 className="text-center text-xl">
 								<strong>Bank Accounts</strong>

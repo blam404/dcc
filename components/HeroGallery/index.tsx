@@ -8,13 +8,18 @@ import {
 	SliderTrack,
 	Slide,
 } from "@faceless-ui/slider";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+
+type GalleryProps = {
+	images: string[];
+	speed?: number;
+	pauseOnHover?: boolean;
+};
 
 export default function HeroGallery({
 	images,
 	speed = 3500,
 	pauseOnHover = false,
-}) {
+}: GalleryProps) {
 	return (
 		<SliderProvider
 			scrollSnap={true}

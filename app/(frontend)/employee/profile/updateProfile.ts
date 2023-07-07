@@ -1,9 +1,16 @@
 "use server";
 
 import { getPayloadClient } from "../../../../payload/payloadClient";
+import { User } from "../../../../types/Payload.types";
 
 const handleLogin = async (
-	{ characterName, bankAccount, phoneNumber, discord, timezone },
+	{
+		characterName,
+		bankAccount,
+		phoneNumber,
+		discord,
+		timezone,
+	}: Partial<User>,
 	user
 ) => {
 	const payload = await getPayloadClient();

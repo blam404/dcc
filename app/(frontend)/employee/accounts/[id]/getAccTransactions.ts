@@ -1,8 +1,28 @@
 "use server";
 
 import { getPayloadClient } from "../../../../../payload/payloadClient";
+import { Account } from "payload/generated-types:";
+import { Meta } from "../../../../../types/PayloadAdd.types";
 
-const getAccTransactions = async (id, limit = 10, page) => {
+type Return =
+	| {
+			success: boolean;
+			transactions: Meta;
+			account: Account;
+			error?: undefined;
+	  }
+	| {
+			error: string;
+			success?: undefined;
+			transactions?: undefined;
+			account?: undefined;
+	  };
+
+const getAccTransactions = async (
+	id: string,
+	limit?: number | null,
+	page?: number
+): Promise<Return> => {
 	const payload = await getPayloadClient();
 
 	try {
@@ -30,7 +50,7 @@ const getAccTransactions = async (id, limit = 10, page) => {
 			sort: "-date",
 			depth: 1,
 			overrideAccess: true,
-			limit,
+			limit: limit || 10,
 			page: page || 1,
 		});
 		return { success: true, transactions: transactions, account };

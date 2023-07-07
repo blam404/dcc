@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useContext, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import {
 	Collapsible,
@@ -17,6 +16,15 @@ import capFirstLetter from "../../../../../utils/capFirstLetter";
 import { UserContext } from "../../../../../components/Providers";
 
 import {
+	Account,
+	Transaction,
+	Vehicle,
+	User,
+	Company,
+} from "../../../../../types/Payload.types";
+import { Meta } from "../../../../../types/PayloadAdd.types";
+
+import {
 	FaChevronDown,
 	FaChevronLeft,
 	FaChevronRight,
@@ -26,22 +34,25 @@ import {
 export async function generateStaticParams() {
 	const accounts = await getRecords(null, true, "accounts");
 
-	return accounts.success.map((account) => {
-		return {
-			id: account.id,
-		};
-	});
+	if (accounts.success) {
+		return accounts.success.map((account) => {
+			return {
+				id: account.id,
+			};
+		});
+	} else {
+		return null;
+	}
 }
 
-export default function Account({ params }) {
-	const [loading, setLoading] = useState(true);
-	const [transactions, setTransaction] = useState([]);
-	const [account, setAccount] = useState({});
-	const [meta, setMeta] = useState({});
-	const [page, setPage] = useState(1);
+export default function Accounts({ params }) {
+	const [loading, setLoading] = useState<boolean>(true);
+	const [transactions, setTransaction] = useState<Transaction[]>([]);
+	const [account, setAccount] = useState<Account>({} as Account);
+	const [meta, setMeta] = useState<Meta>({} as Meta);
+	const [page, setPage] = useState<number>(1);
 
 	const { user } = useContext(UserContext);
-	const router = useRouter();
 
 	useEffect(() => {
 		if (user) {
@@ -64,7 +75,7 @@ export default function Account({ params }) {
 	}, [user]);
 
 	const Pages = () => {
-		const pageNum = [];
+		const pageNum: number[] = [];
 
 		let count = -2;
 		while (pageNum.length < 5 && page + count <= meta.totalPages) {
@@ -77,10 +88,14 @@ export default function Account({ params }) {
 		const goToPage = async (newPage) => {
 			setLoading(true);
 			const results = await getAccTransactions(params.id, 10, newPage);
-			setTransaction(results.transactions.docs);
-			setMeta(results.transactions);
-			setLoading(false);
-			setPage(newPage);
+			if (results.success) {
+				setTransaction(results.transactions.docs);
+				setMeta(results.transactions);
+				setLoading(false);
+				setPage(newPage);
+			} else {
+				//add things if there is an error
+			}
 		};
 
 		return (
@@ -179,14 +194,27 @@ export default function Account({ params }) {
 							<CollapsibleGroup>
 								{transactions.length > 0 &&
 									transactions.map((transaction, index) => {
+										console.log(
+											"transaction: ",
+											transaction
+										);
+
 										const remaining =
-											transaction.from.value.id ===
-											params.id
+											(
+												transaction.from.value as
+													| Account
+													| Company
+													| User
+											).id === params.id
 												? transaction.fromRemaining
 												: transaction.toRemaining;
 										const positive =
-											transaction.to.value.id ===
-											params.id;
+											(
+												transaction.to.value as
+													| Account
+													| Company
+													| User
+											).id === params.id;
 										return (
 											<Collapsible
 												key={transaction.id}
@@ -248,34 +276,46 @@ export default function Account({ params }) {
 																	<strong>
 																		From:
 																	</strong>{" "}
-																	{transaction
-																		.from
-																		.value
+																	{(
+																		transaction
+																			.from
+																			.value as Company
+																	)
 																		.companyName ||
-																		transaction
-																			.from
-																			.value
+																		(
+																			transaction
+																				.from
+																				.value as Account
+																		)
 																			.accountName ||
-																		transaction
-																			.from
-																			.value
+																		(
+																			transaction
+																				.from
+																				.value as User
+																		)
 																			.characterName}
 																</p>
 																<p>
 																	<strong>
 																		To:
 																	</strong>{" "}
-																	{transaction
-																		.to
-																		.value
+																	{(
+																		transaction
+																			.to
+																			.value as Company
+																	)
 																		.companyName ||
-																		transaction
-																			.to
-																			.value
+																		(
+																			transaction
+																				.to
+																				.value as Account
+																		)
 																			.accountName ||
-																		transaction
-																			.to
-																			.value
+																		(
+																			transaction
+																				.to
+																				.value as User
+																		)
 																			.characterName}
 																</p>
 															</div>
@@ -304,10 +344,13 @@ export default function Account({ params }) {
 																	<strong>
 																		Vehicle:
 																	</strong>{" "}
-																	{transaction
-																		.vehicle
-																		?.value
-																		.combinedName ||
+																	{(transaction.vehicle &&
+																		(
+																			transaction
+																				.vehicle
+																				?.value as Vehicle
+																		)
+																			.combinedName) ||
 																		"N/A"}
 																</p>
 																<p>
@@ -316,9 +359,11 @@ export default function Account({ params }) {
 																		By:
 																	</strong>{" "}
 																	{
-																		transaction
-																			.createdBy
-																			.value
+																		(
+																			transaction
+																				.createdBy
+																				.value as User
+																		)
 																			.characterName
 																	}
 																</p>

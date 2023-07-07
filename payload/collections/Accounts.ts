@@ -32,6 +32,7 @@ export const Accounts: CollectionConfig = {
 			name: "accountName",
 			label: "Account Name",
 			type: "text",
+			required: true,
 		},
 		{
 			name: "accountNumber",

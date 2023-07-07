@@ -51,6 +51,7 @@ export const Users: CollectionConfig = {
 			name: "characterName",
 			label: "Character Name",
 			type: "text",
+			required: true,
 		},
 		{
 			name: "title",
