@@ -18,16 +18,23 @@ import getRecords from "../../../../utils/getRecords";
 import { UserContext } from "../../../../components/Providers";
 import AddModal from "./AddModal";
 
+import {
+	Account,
+	Transaction,
+	Vehicle,
+	User,
+	Company,
+} from "../../../../types/Payload.types";
+
 import { FaPen, FaChevronDown, FaPlus, FaSpinner } from "react-icons/fa";
 
 export default function Dashboard() {
-	const [loading, setLoading] = useState(true);
-	const [transactions, setTransactions] = useState([]);
-	const [accounts, setAccounts] = useState([]);
-	const [editing, setEditing] = useState(null);
+	const [loading, setLoading] = useState<boolean>(true);
+	const [transactions, setTransactions] = useState<Transaction[]>([]);
+	const [accounts, setAccounts] = useState<Account[]>([]);
+	const [editing, setEditing] = useState<Transaction | null>(null);
 
 	const { user } = useContext(UserContext);
-	const router = useRouter();
 	const { toggleModal } = useModal();
 
 	useEffect(() => {
@@ -246,34 +253,46 @@ export default function Dashboard() {
 																	<strong>
 																		From:
 																	</strong>{" "}
-																	{transaction
-																		.from
-																		.value
+																	{(
+																		transaction
+																			.from
+																			.value as Company
+																	)
 																		.companyName ||
-																		transaction
-																			.from
-																			.value
+																		(
+																			transaction
+																				.from
+																				.value as Account
+																		)
 																			.accountName ||
-																		transaction
-																			.from
-																			.value
+																		(
+																			transaction
+																				.from
+																				.value as User
+																		)
 																			.characterName}
 																</p>
 																<p>
 																	<strong>
 																		To:
 																	</strong>{" "}
-																	{transaction
-																		.to
-																		.value
+																	{(
+																		transaction
+																			.to
+																			.value as Company
+																	)
 																		.companyName ||
-																		transaction
-																			.to
-																			.value
+																		(
+																			transaction
+																				.to
+																				.value as Account
+																		)
 																			.accountName ||
-																		transaction
-																			.to
-																			.value
+																		(
+																			transaction
+																				.to
+																				.value as User
+																		)
 																			.characterName}
 																</p>
 															</div>
@@ -302,10 +321,13 @@ export default function Dashboard() {
 																	<strong>
 																		Vehicle:
 																	</strong>{" "}
-																	{transaction
-																		.vehicle
-																		?.value
-																		.combinedName ||
+																	{(transaction.vehicle &&
+																		(
+																			transaction
+																				.vehicle
+																				?.value as Vehicle
+																		)
+																			.combinedName) ||
 																		"N/A"}
 																</p>
 																<p>
@@ -314,9 +336,11 @@ export default function Dashboard() {
 																		By:
 																	</strong>{" "}
 																	{
-																		transaction
-																			.createdBy
-																			.value
+																		(
+																			transaction
+																				.createdBy
+																				.value as User
+																		)
 																			.characterName
 																	}
 																</p>

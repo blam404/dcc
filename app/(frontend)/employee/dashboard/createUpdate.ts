@@ -1,8 +1,46 @@
 "use server";
 
 import { getPayloadClient } from "../../../../payload/payloadClient";
+import {
+	User,
+	Company,
+	Account,
+	Vehicle,
+} from "../../../../types/Payload.types";
 
-const createUpdate = async (info, user) => {
+type Info = {
+	id: string;
+	date: string;
+	transactionType: string;
+	secondType: string;
+	expenseOther?: string;
+	noOfPassenger?: number;
+	from: {
+		relationTo: string;
+		value: string;
+	} | null;
+	to: {
+		relationTo: string;
+		value: string;
+	} | null;
+	paymentAmount: number;
+	donationAmount: number;
+	notes?: string | null;
+	vehicle?: {
+		relationTo: string;
+		value: string;
+	} | null;
+	createdBy: {
+		relationTo: "users";
+		value: string;
+	};
+	updatedBy: {
+		relationTo: "users";
+		value: string;
+	};
+};
+
+const createUpdate = async (info: Info, user: User) => {
 	const payload = await getPayloadClient();
 	const {
 		id,

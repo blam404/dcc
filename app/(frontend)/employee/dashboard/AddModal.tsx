@@ -11,6 +11,13 @@ import { UserContext } from "../../../../components/Providers";
 import getRecords from "../../../../utils/getRecords";
 import createUpdate from "./createUpdate";
 
+import {
+	Account,
+	Vehicle,
+	User,
+	Company,
+} from "../../../../types/Payload.types";
+
 import { FaSpinner } from "react-icons/fa";
 
 import "./style.scss";
@@ -97,26 +104,27 @@ const expenseType = [
 
 export default function AddModal({ transactions, setTransactions, editing }) {
 	const [pending, startTransition] = useTransition();
-	const [date, setDate] = useState(new Date());
-	const [transType, setTransType] = useState("");
-	const [secondType, setSecondType] = useState(0);
-	const [other, setOther] = useState(null);
-	const [numPassenger, setNumPassenger] = useState("");
-	const [from, setFrom] = useState(0);
-	const [to, setTo] = useState(0);
-	const [payment, setPayment] = useState(0);
-	const [donation, setDonation] = useState(0);
-	const [notes, setNotes] = useState("");
-	const [vehicle, setVehicle] = useState(0);
-	const [companyList, setCompanyList] = useState([]);
-	const [accountList, setAccountList] = useState([]);
-	const [vehicleList, setVehicleList] = useState([]);
+	const [date, setDate] = useState<Date>(new Date());
+	const [transType, setTransType] = useState<string>("0");
+	const [secondType, setSecondType] = useState<string>("0");
+	const [other, setOther] = useState<string>("");
+	const [numPassenger, setNumPassenger] = useState<number | "">("");
+	const [from, setFrom] = useState<string>("0");
+	const [to, setTo] = useState<string>("0");
+	const [payment, setPayment] = useState<number>(0);
+	const [donation, setDonation] = useState<number>(0);
+	const [notes, setNotes] = useState<string>("");
+	const [vehicle, setVehicle] = useState<string>("0");
+	const [companyList, setCompanyList] = useState<Company[]>([]);
+	const [accountList, setAccountList] = useState<Account[]>([]);
+	const [vehicleList, setVehicleList] = useState<Vehicle[]>([]);
 
 	const { user } = useContext(UserContext);
 	const { toggleModal } = useModal();
 
 	//get all lists
 	useEffect(() => {
+		console.log("transType: ", transType, typeof transType);
 		if (user) {
 			const getAllList = async () => {
 				const accounts = await getRecords(user, false, "accounts");
@@ -160,7 +168,7 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 	//auto fills the from and to field and resets some values
 	useEffect(() => {
 		if (transType === "revenue") {
-			if (other) setOther(null);
+			if (other) setOther("");
 			const compIndex = companyList.findIndex(
 				(company) => company.companyName === "Passenger"
 			);
@@ -170,8 +178,8 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 			);
 			setTo(`account:${accIndex}`);
 		} else if (transType === "donation") {
-			if (other) setOther(null);
-			if (vehicle) setVehicle(0);
+			if (other) setOther("");
+			if (vehicle) setVehicle("0");
 			if (payment) setPayment(0);
 			const compIndex = companyList.findIndex(
 				(company) => company.companyName === "Donor"
@@ -207,9 +215,9 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 				setTo("user");
 			}
 			if (!["gas", "repairs"].includes(secondType) && vehicle) {
-				setVehicle(0);
+				setVehicle("0");
 			}
-			if (secondType !== "other" && other) setOther(null);
+			if (secondType !== "other" && other) setOther("");
 		}
 	}, [transType, secondType]);
 
@@ -227,7 +235,6 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 			setPayment(editing.paymentAmount);
 			setDonation(editing.donationAmount);
 			setNotes(editing.notes || "");
-			// need to find vehicle, from, and to
 
 			if (editing.vehicle) {
 				const vehicleIndex = vehicleList.findIndex(
@@ -235,32 +242,33 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 				);
 				setVehicle(`vehicle:${vehicleIndex}`);
 			}
-
-			if (from.relationTo === "accounts") {
+			console.log("from: ", from);
+			console.log("to: ", to);
+			if (editing.from.relationTo === "accounts") {
 				const fromIndex = accountList.findIndex(
 					(account) => account.id === editing.from.value.id
 				);
 				setFrom(`account:${fromIndex}`);
-			} else if (from.relationTo === "companies") {
-				const fromIndex = company.findIndex(
+			} else if (editing.from.relationTo === "companies") {
+				const fromIndex = companyList.findIndex(
 					(company) => company.id === editing.from.value.id
 				);
 				setFrom(`company:${fromIndex}`);
-			} else if (from.relationTo === "user") {
+			} else if (editing.from.relationTo === "user") {
 				setFrom("user");
 			}
 
-			if (to.relationTo === "accounts") {
+			if (editing.to.relationTo === "accounts") {
 				const toIndex = accountList.findIndex(
 					(account) => account.id === editing.to.value.id
 				);
 				setTo(`account:${toIndex}`);
-			} else if (to.relationTo === "companies") {
-				const toIndex = company.findIndex(
+			} else if (editing.to.relationTo === "companies") {
+				const toIndex = companyList.findIndex(
 					(company) => company.id === editing.from.value.id
 				);
 				setTo(`company:${toIndex}`);
-			} else if (to.relationTo === "user") {
+			} else if (editing.to.relationTo === "user") {
 				setTo("user");
 			}
 		} else {
@@ -270,31 +278,32 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 
 	const resetFields = () => {
 		setDate(new Date());
-		setTransType("");
-		setSecondType(null);
-		setOther(null);
+		setTransType("0");
+		setSecondType("0");
+		setOther("");
 		setNumPassenger("");
-		setFrom(0);
-		setTo(0);
+		setFrom("0");
+		setTo("0");
 		setPayment(0);
 		setDonation(0);
 		setNotes("");
-		setVehicle(0);
+		setVehicle("0");
 	};
 
 	const handleTransType = (e) => {
 		setTransType(e.target.value);
 		if (secondType) {
-			setSecondType(null);
+			setSecondType("0");
 		}
 	};
 
 	const handleSubmit = async () => {
-		const fromInfo = from.split(":");
-		const toInfo = to.split(":");
+		const [fromType, fromIndex] = from.split(":");
+		const [toType, toIndex] = to.split(":");
+		const [vehicleType, vehicleIndex] = vehicle ? vehicle.split(":") : [];
 
 		let canSubmit =
-			transType &&
+			transType !== "0" &&
 			secondType &&
 			(secondType !== "other" || (secondType === "other" && other)) &&
 			from &&
@@ -302,21 +311,21 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 			payment >= 0 &&
 			donation >= 0;
 
-		const getRelation = (info) => {
-			switch (info[0]) {
+		const getRelation = (type, index) => {
+			switch (type) {
 				case "account":
 					return {
-						value: accountList[info[1]].id,
+						value: accountList[index].id,
 						relationTo: "accounts",
 					};
 				case "company":
 					return {
-						value: companyList[info[1]].id,
+						value: companyList[index].id,
 						relationTo: "companies",
 					};
 				case "vehicle":
 					return {
-						value: vehicleList[info[1]].id,
+						value: vehicleList[index].id,
 						relationTo: "vehicles",
 					};
 				case "user":
@@ -324,33 +333,36 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 						value: user.id,
 						relationTo: "users",
 					};
+				default:
+					return null;
 			}
 		};
 
-		const data = {
-			id: editing?.id || null,
-			date: format(date, "yyyy-MM-dd'T'kk:mm:ss.SSSXXX"),
-			transactionType: transType,
-			secondType,
-			expenseOther: other,
-			noOfPassenger: Number(numPassenger),
-			paymentAmount: Number(payment),
-			donationAmount: Number(donation),
-			from: getRelation(fromInfo),
-			to: getRelation(toInfo),
-			notes: notes.length > 0 ? notes : null,
-			vehicle: vehicle ? getRelation(vehicle.split(":")) : null,
-			createdBy: {
-				value: user.id,
-				relationTo: "users",
+		const results = await createUpdate(
+			{
+				id: editing?.id || null,
+				date: format(date, "yyyy-MM-dd'T'kk:mm:ss.SSSXXX"),
+				transactionType: transType,
+				secondType,
+				expenseOther: other,
+				noOfPassenger: Number(numPassenger),
+				paymentAmount: Number(payment),
+				donationAmount: Number(donation),
+				from: getRelation(fromType, fromIndex),
+				to: getRelation(toType, toIndex),
+				notes: notes.length > 0 ? notes : null,
+				vehicle: getRelation(vehicleType, vehicleIndex),
+				createdBy: {
+					value: user.id,
+					relationTo: "users",
+				},
+				updatedBy: {
+					value: user.id,
+					relationTo: "users",
+				},
 			},
-			updatedBy: {
-				value: user.id,
-				relationTo: "users",
-			},
-		};
-
-		const results = await createUpdate(data, user);
+			user
+		);
 
 		if (results.success) {
 			resetFields();
@@ -360,6 +372,12 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 					characterName: user.characterName,
 				},
 			};
+			results.success.vehicle = vehicle
+				? {
+						relationTo: "users",
+						value: vehicleList[vehicleIndex],
+				  }
+				: null;
 		}
 
 		if (canSubmit && editing) {
@@ -438,7 +456,7 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 							onChange={(e) => handleTransType(e)}
 							value={transType}
 						>
-							<option disabled={transType} value={0}>
+							<option disabled={transType !== "0"} value={"0"}>
 								-- select an option --
 							</option>
 							{transactionTypes.map((type) => (
@@ -458,7 +476,10 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 									}
 									value={secondType}
 								>
-									<option disabled={secondType} value={0}>
+									<option
+										disabled={secondType !== "0"}
+										value={"0"}
+									>
 										-- select an option --
 									</option>
 									{revenueType.map((type) => (
@@ -476,7 +497,7 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 								<input
 									type="number"
 									onChange={(e) => {
-										setNumPassenger(e.target.value);
+										setNumPassenger(e.target.valueAsNumber);
 									}}
 									value={numPassenger}
 								/>
@@ -490,7 +511,10 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 								onChange={(e) => setSecondType(e.target.value)}
 								value={secondType}
 							>
-								<option disabled={secondType} value={0}>
+								<option
+									disabled={secondType !== "0"}
+									value={"0"}
+								>
 									-- select an option --
 								</option>
 								{donationType.map((type) => (
@@ -511,7 +535,10 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 									}
 									value={secondType}
 								>
-									<option disabled={secondType} value={0}>
+									<option
+										disabled={secondType !== "0"}
+										value={"0"}
+									>
 										-- select an option --
 									</option>
 									{expenseType.map((type) => (
@@ -537,7 +564,7 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 							)}
 						</div>
 					)}
-					{transType && (
+					{transType !== "0" && (
 						<>
 							<div className="flex mt-2">
 								{(transType === "revenue" ||
@@ -548,7 +575,9 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 											type="number"
 											value={payment}
 											onChange={(e) =>
-												setPayment(e.target.value)
+												setPayment(
+													e.target.valueAsNumber
+												)
 											}
 										/>
 									</div>
@@ -561,7 +590,9 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 											type="number"
 											value={donation}
 											onChange={(e) =>
-												setDonation(e.target.value)
+												setDonation(
+													e.target.valueAsNumber
+												)
 											}
 										/>
 									</div>
@@ -576,7 +607,10 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 										}
 										value={from}
 									>
-										<option disabled={from} value={0}>
+										<option
+											disabled={from !== "0"}
+											value={"0"}
+										>
 											-- select an option --
 										</option>
 										{accountList.map((account, index) => (
@@ -606,7 +640,10 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 										onChange={(e) => setTo(e.target.value)}
 										value={to}
 									>
-										<option disabled={to} value={0}>
+										<option
+											disabled={to !== "0"}
+											value={"0"}
+										>
 											-- select an option --
 										</option>
 										{accountList.map((account, index) => (
@@ -654,7 +691,7 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 										}
 										value={vehicle}
 									>
-										<option value={0}>None</option>
+										<option value={"0"}>None</option>
 										{vehicleList.map((vehicle, index) => (
 											<option
 												key={vehicle.id}
