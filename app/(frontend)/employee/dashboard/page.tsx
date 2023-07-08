@@ -11,9 +11,9 @@ import {
 	CollapsibleToggler,
 } from "@faceless-ui/collapsibles";
 
-import capFirstLetter from "../../../../utils/capFirstLetter";
-import getRecords from "../../../../utils/getRecords";
-import { UserContext } from "../../../../components/Providers";
+import capFirstLetter from "~utils/capFirstLetter";
+import getRecords from "~utils/getRecords";
+import { UserContext } from "~components/Providers";
 import AddEdit from "./AddEdit";
 
 import {
@@ -22,7 +22,7 @@ import {
 	Vehicle,
 	User,
 	Company,
-} from "../../../../types/Payload.types";
+} from "~types/Payload.types";
 
 import { FaPen, FaChevronDown, FaPlus, FaSpinner } from "react-icons/fa";
 

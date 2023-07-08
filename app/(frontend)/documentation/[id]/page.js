@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
-import { getPayloadClient } from "../../../../payload/payloadClient";
-import SectionContent from "../../../../components/documentation/SectionContent";
-import SectionNav from "../../../../components/documentation/SectionNav";
+import { getPayloadClient } from "~payload/payloadClient";
+import SectionContent from "~components/documentation/SectionContent";
+import SectionNav from "~components/documentation/SectionNav";
 
 export async function generateStaticParams() {
 	const payload = await getPayloadClient();

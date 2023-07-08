@@ -1,5 +1,5 @@
 import React from "react";
-import HeroGallery from "../../components/HeroGallery";
+import HeroGallery from "~components/HeroGallery";
 
 export default function Home() {
 	const images = [

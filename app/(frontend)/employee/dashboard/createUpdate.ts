@@ -1,12 +1,7 @@
 "use server";
 
-import { getPayloadClient } from "../../../../payload/payloadClient";
-import {
-	User,
-	Company,
-	Account,
-	Vehicle,
-} from "../../../../types/Payload.types";
+import { getPayloadClient } from "~payload/payloadClient";
+import { User } from "~types/Payload.types";
 
 type Info = {
 	id: string;

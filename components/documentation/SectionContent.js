@@ -2,7 +2,7 @@
 
 import React from "react";
 import { JumplistNode } from "@faceless-ui/jumplist";
-import serialize from "../../utils/serialize";
+import serialize from "~utils/serialize";
 
 export default function SectionContent({ section, index }) {
 	return (

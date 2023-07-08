@@ -1,9 +1,9 @@
 import React from "react";
 import "./globals.scss";
 
-import Footer from "../../components/Footer";
-import Nav from "../../components/Nav";
-import Providers from "../../components/Providers";
+import Footer from "~components/Footer";
+import Nav from "~components/Nav";
+import Providers from "~components/Providers";
 
 export default function RootLayout({ children }) {
 	return (

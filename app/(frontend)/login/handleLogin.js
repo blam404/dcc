@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { getPayloadClient } from "../../../payload/payloadClient";
+import { getPayloadClient } from "~payload/payloadClient";
 
 const handleLogin = async (email, password) => {
 	const payload = await getPayloadClient();

@@ -17,10 +17,15 @@
 		"resolveJsonModule": true,
 		"isolatedModules": true,
 		"jsx": "preserve",
+		"baseUrl": "./",
 		"paths": {
 			"payload/generated-types:": [
 				"./types/Payload.types.ts"
-			]
+			],
+			"~utils/*": ["utils/*"],
+			"~components/*": ["components/*"],
+			"~types/*": ["types/*"],
+			"~payload/*": ["payload/*"]
 		},
 		"plugins": [
 			{
@@ -33,7 +38,11 @@
 		"next-env.d.ts",
 		".next/types/**/*.ts",
 		"**/*.ts",
-		"**/*.tsx"
+		"**/*.tsx",
+		"utils",
+		"components",
+		"type",
+		"payload"
 	],
 	"exclude": [
 		"node_modules"

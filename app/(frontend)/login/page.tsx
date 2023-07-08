@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
 import handleLogin from "./handleLogin";
-import { UserContext } from "../../../components/Providers";
+import { UserContext } from "~components/Providers";
 
 import { FaSpinner } from "react-icons/fa";
 

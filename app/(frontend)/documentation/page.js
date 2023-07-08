@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { getPayloadClient } from "../../../payload/payloadClient";
+import { getPayloadClient } from "~payload/payloadClient";
 
 export default async function Documentation() {
 	const payload = await getPayloadClient();

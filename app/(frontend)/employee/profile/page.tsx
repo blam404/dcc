@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
-import { UserContext } from "../../../../components/Providers";
+import { UserContext } from "~components/Providers";
 import updateProfile from "./updateProfile";
 
 import { FaSpinner } from "react-icons/fa";

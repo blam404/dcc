@@ -1,7 +1,7 @@
 "use server";
 
-import { getPayloadClient } from "../../../../payload/payloadClient";
-import { User } from "../../../../types/Payload.types";
+import { getPayloadClient } from "~payload/payloadClient";
+import { User } from "~types/Payload.types";
 
 const handleLogin = async (
 	{

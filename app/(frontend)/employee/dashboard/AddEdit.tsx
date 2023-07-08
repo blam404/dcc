@@ -14,11 +14,11 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { toast } from "react-toastify";
 
-import { UserContext } from "../../../../components/Providers";
-import getRecords from "../../../../utils/getRecords";
+import { UserContext } from "~components/Providers";
+import getRecords from "~utils/getRecords";
 import createUpdate from "./createUpdate";
 
-import { Account, Vehicle, Company } from "../../../../types/Payload.types";
+import { Account, Vehicle, Company } from "~types/Payload.types";
 
 import { FaSpinner } from "react-icons/fa";
 

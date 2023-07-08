@@ -1,6 +1,6 @@
 "use server";
 
-import { getPayloadClient } from "../payload/payloadClient";
+import { getPayloadClient } from "~payload/payloadClient";
 
 type User = {
 	backAccount?: string;

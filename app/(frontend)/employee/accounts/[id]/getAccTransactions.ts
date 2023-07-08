@@ -1,8 +1,8 @@
 "use server";
 
-import { getPayloadClient } from "../../../../../payload/payloadClient";
-import { Account } from "payload/generated-types:";
-import { Meta } from "../../../../../types/PayloadAdd.types";
+import { getPayloadClient } from "~payload/payloadClient";
+import { Account } from "~types/Payload.types";
+import { Meta } from "~types/PayloadAdd.types";
 
 type Return =
 	| {

@@ -10,10 +10,10 @@ import {
 } from "@faceless-ui/collapsibles";
 import { format } from "date-fns";
 
-import getRecords from "../../../../../utils/getRecords";
+import getRecords from "~utils/getRecords";
 import getAccTransactions from "./getAccTransactions";
-import capFirstLetter from "../../../../../utils/capFirstLetter";
-import { UserContext } from "../../../../../components/Providers";
+import capFirstLetter from "~utils/capFirstLetter";
+import { UserContext } from "~components/Providers";
 
 import {
 	Account,
@@ -21,8 +21,8 @@ import {
 	Vehicle,
 	User,
 	Company,
-} from "../../../../../types/Payload.types";
-import { Meta } from "../../../../../types/PayloadAdd.types";
+} from "~types/Payload.types";
+import { Meta } from "~types/PayloadAdd.types";
 
 import {
 	FaChevronDown,
