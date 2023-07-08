@@ -12,7 +12,6 @@
 	"dependencies": {
 		"@faceless-ui/collapsibles": "^1.1.5",
 		"@faceless-ui/jumplist": "^2.0.0-alpha.2",
-		"@faceless-ui/modal": "^2.0.1",
 		"@faceless-ui/slider": "^1.1.17",
 		"@headlessui/react": "^1.7.15",
 		"@headlessui/tailwindcss": "^0.1.3",

@@ -44,12 +44,12 @@ export default function Nav() {
 								<FaUserCircle className="rounded-full bg-amber-300  text-white h-10 w-10" />
 							</Menu.Button>
 							<Transition
-								enter="transition ease-out duration-100"
-								enterFrom="transform opacity-0 scale-95"
-								enterTo="transform opacity-100 scale-100"
-								leave="transition ease-in duration-75"
-								leaveFrom="transform opacity-100 scale-100"
-								leaveTo="transform opacity-0 scale-95"
+								enter="transition duration-200 ease-out origin-top-right"
+								enterFrom="transform scale-50 opacity-0"
+								enterTo="transform scale-100 opacity-100"
+								leave="transition duration-200 ease-out origin-top-right"
+								leaveFrom="transform scale-100 opacity-100"
+								leaveTo="transform scale-50 opacity-0"
 							>
 								<Menu.Items
 									as="ul"

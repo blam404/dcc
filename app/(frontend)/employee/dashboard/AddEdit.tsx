@@ -1,7 +1,14 @@
 "use client";
 
-import React, { useContext, useEffect, useState, useTransition } from "react";
-import { Modal, useModal } from "@faceless-ui/modal";
+import React, {
+	Fragment,
+	useContext,
+	useEffect,
+	useRef,
+	useState,
+	useTransition,
+} from "react";
+import { Dialog, Transition } from "@headlessui/react";
 import { format } from "date-fns";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -11,12 +18,7 @@ import { UserContext } from "../../../../components/Providers";
 import getRecords from "../../../../utils/getRecords";
 import createUpdate from "./createUpdate";
 
-import {
-	Account,
-	Vehicle,
-	User,
-	Company,
-} from "../../../../types/Payload.types";
+import { Account, Vehicle, Company } from "../../../../types/Payload.types";
 
 import { FaSpinner } from "react-icons/fa";
 
@@ -102,7 +104,13 @@ const expenseType = [
 	},
 ];
 
-export default function AddModal({ transactions, setTransactions, editing }) {
+export default function AddEdit({
+	transactions,
+	setTransactions,
+	editing,
+	isOpen,
+	setIsOpen,
+}) {
 	const [pending, startTransition] = useTransition();
 	const [date, setDate] = useState<Date>(new Date());
 	const [transType, setTransType] = useState<string>("0");
@@ -119,12 +127,12 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 	const [accountList, setAccountList] = useState<Account[]>([]);
 	const [vehicleList, setVehicleList] = useState<Vehicle[]>([]);
 
+	const focusRef = useRef<HTMLSelectElement>(null);
+
 	const { user } = useContext(UserContext);
-	const { toggleModal } = useModal();
 
 	//get all lists
 	useEffect(() => {
-		console.log("transType: ", transType, typeof transType);
 		if (user) {
 			const getAllList = async () => {
 				const accounts = await getRecords(user, false, "accounts");
@@ -366,7 +374,7 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 
 		if (results.success) {
 			resetFields();
-			toggleModal("addTransaction");
+			setIsOpen(false);
 			results.success.createdBy = {
 				value: {
 					characterName: user.characterName,
@@ -436,99 +444,109 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 	};
 
 	return (
-		<Modal
-			slug="addTransaction"
-			className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[530px] h-[566px] p-4 rounded border border-amber-300"
-		>
-			<div>
-				<div>
-					<div>
-						<div>Date</div>
-						<DatePicker
-							selected={date}
-							onChange={(date) => setDate(date)}
-							dateFormat="LLL d y"
-						/>
-					</div>
-					<div className="mt-2">
-						<div>Type</div>
-						<select
-							onChange={(e) => handleTransType(e)}
-							value={transType}
-						>
-							<option disabled={transType !== "0"} value={"0"}>
-								-- select an option --
-							</option>
-							{transactionTypes.map((type) => (
-								<option key={type.value} value={type.value}>
-									{type.label}
-								</option>
-							))}
-						</select>
-					</div>
-					{transType === "revenue" && (
-						<div className="flex mt-2">
-							<div className="w-1/2 mr-4">
-								<div>Revenue Type</div>
-								<select
-									onChange={(e) =>
-										setSecondType(e.target.value)
-									}
-									value={secondType}
-								>
-									<option
-										disabled={secondType !== "0"}
-										value={"0"}
-									>
-										-- select an option --
-									</option>
-									{revenueType.map((type) => (
-										<option
-											key={type.value}
-											value={type.value}
-										>
-											{type.label}
-										</option>
-									))}
-								</select>
-							</div>
-							<div className="w-1/2">
-								<div># of Passengers:</div>
-								<input
-									type="number"
-									onChange={(e) => {
-										setNumPassenger(e.target.valueAsNumber);
-									}}
-									value={numPassenger}
-								/>
-							</div>
+		<Transition show={isOpen} as={Fragment}>
+			<Dialog
+				initialFocus={focusRef}
+				onClose={() => setIsOpen(false)}
+				className="relative z-50"
+			>
+				<Transition.Child
+					enter="transition-opacity ease-linear duration-200"
+					enterFrom="opacity-0"
+					enterTo="opacity-100"
+					leave="transition-opacity ease-linear duration-200"
+					leaveFrom="opacity-100"
+					leaveTo="opacity-0"
+				>
+					<div
+						className="fixed inset-0 bg-black/75"
+						aria-hidden="true"
+					/>
+				</Transition.Child>
+				<Transition.Child
+					enter="transition-all ease-in-out duration-200 transform"
+					enterFrom="translate-y-full -translate-x-1/2"
+					enterTo="-translate-y-1/2 -translate-x-1/2"
+					leave="transition-all ease-in-out duration-200 transform"
+					leaveFrom="-translate-y-1/2 -translate-x-1/2"
+					leaveTo="translate-y-full -translate-x-1/2"
+					className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+				>
+					<Dialog.Panel className=" w-[530px] h-[566px] p-4 rounded-md border border-amber-300 bg-white">
+						<Dialog.Title>
+							<strong>Add a Transaction</strong>
+						</Dialog.Title>
+						<div className="pt-2">
+							<div>Date</div>
+							<DatePicker
+								selected={date}
+								onChange={(date) => setDate(date)}
+								dateFormat="LLL d y"
+							/>
 						</div>
-					)}
-					{transType === "donation" && (
 						<div className="mt-2">
-							<div>Donation Type</div>
+							<div>Type</div>
 							<select
-								onChange={(e) => setSecondType(e.target.value)}
-								value={secondType}
+								ref={focusRef}
+								onChange={(e) => handleTransType(e)}
+								value={transType}
 							>
 								<option
-									disabled={secondType !== "0"}
+									disabled={transType !== "0"}
 									value={"0"}
 								>
 									-- select an option --
 								</option>
-								{donationType.map((type) => (
+								{transactionTypes.map((type) => (
 									<option key={type.value} value={type.value}>
 										{type.label}
 									</option>
 								))}
 							</select>
 						</div>
-					)}
-					{transType === "expense" && (
-						<div className="flex mt-2">
-							<div className="w-1/2 mr-4">
-								<div>Expense Type</div>
+						{transType === "revenue" && (
+							<div className="flex mt-2">
+								<div className="w-1/2 mr-4">
+									<div>Revenue Type</div>
+									<select
+										onChange={(e) =>
+											setSecondType(e.target.value)
+										}
+										value={secondType}
+									>
+										<option
+											disabled={secondType !== "0"}
+											value={"0"}
+										>
+											-- select an option --
+										</option>
+										{revenueType.map((type) => (
+											<option
+												key={type.value}
+												value={type.value}
+											>
+												{type.label}
+											</option>
+										))}
+									</select>
+								</div>
+								<div className="w-1/2">
+									<div># of Passengers:</div>
+									<input
+										type="number"
+										onChange={(e) => {
+											setNumPassenger(
+												e.target.valueAsNumber
+											);
+										}}
+										value={numPassenger}
+									/>
+								</div>
+							</div>
+						)}
+						{transType === "donation" && (
+							<div className="mt-2">
+								<div>Donation Type</div>
 								<select
 									onChange={(e) =>
 										setSecondType(e.target.value)
@@ -541,7 +559,7 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 									>
 										-- select an option --
 									</option>
-									{expenseType.map((type) => (
+									{donationType.map((type) => (
 										<option
 											key={type.value}
 											value={type.value}
@@ -551,179 +569,219 @@ export default function AddModal({ transactions, setTransactions, editing }) {
 									))}
 								</select>
 							</div>
-							{secondType === "other" && (
-								<div className="w-1/2">
-									<div>Other:</div>
-									<input
-										type="text"
-										onChange={(e) => {
-											setOther(e.target.value);
-										}}
-									/>
-								</div>
-							)}
-						</div>
-					)}
-					{transType !== "0" && (
-						<>
-							<div className="flex mt-2">
-								{(transType === "revenue" ||
-									transType === "expense") && (
-									<div className="w-1/2 mr-4">
-										<div>Payment Amount:</div>
-										<input
-											type="number"
-											value={payment}
-											onChange={(e) =>
-												setPayment(
-													e.target.valueAsNumber
-												)
-											}
-										/>
-									</div>
-								)}
-								{(transType === "revenue" ||
-									transType === "donation") && (
-									<div className="w-1/2">
-										<div>Donation Amount:</div>
-										<input
-											type="number"
-											value={donation}
-											onChange={(e) =>
-												setDonation(
-													e.target.valueAsNumber
-												)
-											}
-										/>
-									</div>
-								)}
-							</div>
+						)}
+						{transType === "expense" && (
 							<div className="flex mt-2">
 								<div className="w-1/2 mr-4">
-									<div>From:</div>
+									<div>Expense Type</div>
 									<select
 										onChange={(e) =>
-											setFrom(e.target.value)
+											setSecondType(e.target.value)
 										}
-										value={from}
+										value={secondType}
 									>
 										<option
-											disabled={from !== "0"}
+											disabled={secondType !== "0"}
 											value={"0"}
 										>
 											-- select an option --
 										</option>
-										{accountList.map((account, index) => (
+										{expenseType.map((type) => (
 											<option
-												key={account.id}
-												value={`account:${index}`}
+												key={type.value}
+												value={type.value}
 											>
-												{account.accountName}
+												{type.label}
 											</option>
 										))}
-										{companyList.map((company, index) => (
-											<option
-												key={company.id}
-												value={`company:${index}`}
-											>
-												{company.companyName}
-											</option>
-										))}
-										<option value={"user"}>
-											{user.characterName}
-										</option>
 									</select>
 								</div>
-								<div className="w-1/2">
-									<div>To:</div>
-									<select
-										onChange={(e) => setTo(e.target.value)}
-										value={to}
-									>
-										<option
-											disabled={to !== "0"}
-											value={"0"}
-										>
-											-- select an option --
-										</option>
-										{accountList.map((account, index) => (
-											<option
-												key={account.id}
-												value={`account:${index}`}
-											>
-												{account.accountName}
-											</option>
-										))}
-										{companyList.map((company, index) => (
-											<option
-												key={company.id}
-												value={`company:${index}`}
-											>
-												{company.companyName}
-											</option>
-										))}
-										<option value={"user"}>
-											{user.characterName}
-										</option>
-									</select>
-								</div>
+								{secondType === "other" && (
+									<div className="w-1/2">
+										<div>Other:</div>
+										<input
+											type="text"
+											onChange={(e) => {
+												setOther(e.target.value);
+											}}
+										/>
+									</div>
+								)}
 							</div>
-							<div className="mt-2">
-								<div>Notes</div>
-								<textarea
-									value={notes}
-									onChange={(e) => {
-										setNotes(e.target.value);
-									}}
-									className="w-full"
-								/>
-							</div>
-							{(transType === "revenue" ||
-								(transType === "expense" &&
-									["gas", "repairs"].includes(
-										secondType
-									))) && (
-								<div className="mt-2">
-									<div>Vehicle Used</div>
-									<select
-										onChange={(e) =>
-											setVehicle(e.target.value)
-										}
-										value={vehicle}
-									>
-										<option value={"0"}>None</option>
-										{vehicleList.map((vehicle, index) => (
-											<option
-												key={vehicle.id}
-												value={`vehicle:${index}`}
-											>
-												{vehicle.combinedName}
-											</option>
-										))}
-									</select>
-								</div>
-							)}
-							<div className="flex justify-center mt-4">
-								<button
-									className="px-2 py-1 rounded-md bg-amber-300"
-									onClick={async () => {
-										startTransition(handleSubmit);
-									}}
-									disabled={pending}
-								>
-									{pending ? (
-										<FaSpinner className="animate-spin h-6 w-6" />
-									) : editing ? (
-										"Update"
-									) : (
-										"Submit"
+						)}
+						{transType !== "0" && (
+							<>
+								<div className="flex mt-2">
+									{(transType === "revenue" ||
+										transType === "expense") && (
+										<div className="w-1/2 mr-4">
+											<div>Payment Amount:</div>
+											<input
+												type="number"
+												value={payment}
+												onChange={(e) =>
+													setPayment(
+														e.target.valueAsNumber
+													)
+												}
+											/>
+										</div>
 									)}
-								</button>
-							</div>
-						</>
-					)}
-				</div>
-			</div>
-		</Modal>
+									{(transType === "revenue" ||
+										transType === "donation") && (
+										<div className="w-1/2">
+											<div>Donation Amount:</div>
+											<input
+												type="number"
+												value={donation}
+												onChange={(e) =>
+													setDonation(
+														e.target.valueAsNumber
+													)
+												}
+											/>
+										</div>
+									)}
+								</div>
+								<div className="flex mt-2">
+									<div className="w-1/2 mr-4">
+										<div>From:</div>
+										<select
+											onChange={(e) =>
+												setFrom(e.target.value)
+											}
+											value={from}
+										>
+											<option
+												disabled={from !== "0"}
+												value={"0"}
+											>
+												-- select an option --
+											</option>
+											{accountList.map(
+												(account, index) => (
+													<option
+														key={account.id}
+														value={`account:${index}`}
+													>
+														{account.accountName}
+													</option>
+												)
+											)}
+											{companyList.map(
+												(company, index) => (
+													<option
+														key={company.id}
+														value={`company:${index}`}
+													>
+														{company.companyName}
+													</option>
+												)
+											)}
+											<option value={"user"}>
+												{user.characterName}
+											</option>
+										</select>
+									</div>
+									<div className="w-1/2">
+										<div>To:</div>
+										<select
+											onChange={(e) =>
+												setTo(e.target.value)
+											}
+											value={to}
+										>
+											<option
+												disabled={to !== "0"}
+												value={"0"}
+											>
+												-- select an option --
+											</option>
+											{accountList.map(
+												(account, index) => (
+													<option
+														key={account.id}
+														value={`account:${index}`}
+													>
+														{account.accountName}
+													</option>
+												)
+											)}
+											{companyList.map(
+												(company, index) => (
+													<option
+														key={company.id}
+														value={`company:${index}`}
+													>
+														{company.companyName}
+													</option>
+												)
+											)}
+											<option value={"user"}>
+												{user.characterName}
+											</option>
+										</select>
+									</div>
+								</div>
+								<div className="mt-2">
+									<div>Notes</div>
+									<textarea
+										value={notes}
+										onChange={(e) => {
+											setNotes(e.target.value);
+										}}
+										className="w-full"
+									/>
+								</div>
+								{(transType === "revenue" ||
+									(transType === "expense" &&
+										["gas", "repairs"].includes(
+											secondType
+										))) && (
+									<div className="mt-2">
+										<div>Vehicle Used</div>
+										<select
+											onChange={(e) =>
+												setVehicle(e.target.value)
+											}
+											value={vehicle}
+										>
+											<option value={"0"}>None</option>
+											{vehicleList.map(
+												(vehicle, index) => (
+													<option
+														key={vehicle.id}
+														value={`vehicle:${index}`}
+													>
+														{vehicle.combinedName}
+													</option>
+												)
+											)}
+										</select>
+									</div>
+								)}
+								<div className="flex justify-center mt-4">
+									<button
+										className="px-2 py-1 rounded-md bg-amber-300"
+										onClick={async () => {
+											startTransition(handleSubmit);
+										}}
+										disabled={pending}
+									>
+										{pending ? (
+											<FaSpinner className="animate-spin h-6 w-6" />
+										) : editing ? (
+											"Update"
+										) : (
+											"Submit"
+										)}
+									</button>
+								</div>
+							</>
+						)}
+					</Dialog.Panel>
+				</Transition.Child>
+			</Dialog>
+		</Transition>
 	);
 }

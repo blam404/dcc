@@ -2,9 +2,7 @@
 
 import React, { useContext, useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { format } from "date-fns";
-import { useModal } from "@faceless-ui/modal";
 import { toast } from "react-toastify";
 import {
 	Collapsible,
@@ -16,7 +14,7 @@ import {
 import capFirstLetter from "../../../../utils/capFirstLetter";
 import getRecords from "../../../../utils/getRecords";
 import { UserContext } from "../../../../components/Providers";
-import AddModal from "./AddModal";
+import AddEdit from "./AddEdit";
 
 import {
 	Account,
@@ -30,12 +28,12 @@ import { FaPen, FaChevronDown, FaPlus, FaSpinner } from "react-icons/fa";
 
 export default function Dashboard() {
 	const [loading, setLoading] = useState<boolean>(true);
+	const [isOpen, setIsOpen] = useState(false);
 	const [transactions, setTransactions] = useState<Transaction[]>([]);
 	const [accounts, setAccounts] = useState<Account[]>([]);
 	const [editing, setEditing] = useState<Transaction | null>(null);
 
 	const { user } = useContext(UserContext);
-	const { toggleModal } = useModal();
 
 	useEffect(() => {
 		if (user) {
@@ -179,7 +177,7 @@ export default function Dashboard() {
 										<FaPlus
 											onClick={() => {
 												setEditing(null);
-												toggleModal("addTransaction");
+												setIsOpen(true);
 											}}
 										/>
 									</button>
@@ -236,8 +234,8 @@ export default function Dashboard() {
 																setEditing(
 																	transaction
 																),
-																	toggleModal(
-																		"addTransaction"
+																	setIsOpen(
+																		true
 																	);
 															}}
 														/>
@@ -354,10 +352,12 @@ export default function Dashboard() {
 							</CollapsibleGroup>
 						</ul>
 					</div>
-					<AddModal
+					<AddEdit
 						transactions={transactions}
 						setTransactions={setTransactions}
 						editing={editing}
+						isOpen={isOpen}
+						setIsOpen={setIsOpen}
 					/>
 				</div>
 			)}
