@@ -179,7 +179,7 @@ export default function Dashboard() {
 
 	return !loading ? (
 		<>
-			<div className="container mx-auto py-8 px-8">
+			<div className="container mx-auto p-8">
 				{accounts.length > 0 && (
 					<>
 						<h1 className="text-2xl font-bold">Accounts</h1>
@@ -493,7 +493,9 @@ export default function Dashboard() {
 																</div>
 															</CollapsibleContent>
 														</li>
-														{index !== 9 && (
+														{index !==
+															transactions.length -
+																1 && (
 															<hr className="my-2 border-neutral-400" />
 														)}
 													</Collapsible>
