@@ -30,6 +30,7 @@ import {
 	FaChevronRight,
 	FaSpinner,
 } from "react-icons/fa";
+import { secondaryTypeLabel } from "~utils/companySpecifics";
 
 export async function generateStaticParams() {
 	const accounts = await getRecords(null, true, "accounts");
@@ -41,7 +42,7 @@ export async function generateStaticParams() {
 			};
 		});
 	} else {
-		return null;
+		return [];
 	}
 }
 
@@ -52,7 +53,7 @@ export default function Accounts({ params }) {
 	const [meta, setMeta] = useState<Meta>({} as Meta);
 	const [page, setPage] = useState<number>(1);
 
-	const { user } = useContext(UserContext);
+	let { user } = useContext(UserContext);
 
 	useEffect(() => {
 		if (user) {
@@ -130,42 +131,6 @@ export default function Accounts({ params }) {
 		);
 	};
 
-	const parseType = (transaction) => {
-		const type =
-			transaction.revenueType ||
-			transaction.expenseType ||
-			transaction.donationType;
-
-		switch (type) {
-			case "gas":
-				return "Gas";
-			case "cashCab":
-				return "Cash Cab";
-			case "taxi":
-				return "Taxi Service";
-			case "general":
-				return "General";
-			case "limo":
-				return "Limo Service";
-			case "city":
-				return "City Tour";
-			case "gang":
-				return "Gang Tour";
-			case "helicoptor":
-				return "Helicoptor Tour";
-			case "submarine":
-				return "Submarine Tour";
-			case "foodDrink":
-				return "Food/Drinks";
-			case "payroll":
-				return "Payroll";
-			case "repairs":
-				return "Repairs";
-			case "other":
-				return transaction.expenseOther;
-		}
-	};
-
 	return (
 		<>
 			{loading && (
@@ -194,11 +159,6 @@ export default function Accounts({ params }) {
 							<CollapsibleGroup>
 								{transactions.length > 0 &&
 									transactions.map((transaction, index) => {
-										console.log(
-											"transaction: ",
-											transaction
-										);
-
 										const remaining =
 											(
 												transaction.from.value as
@@ -215,6 +175,10 @@ export default function Accounts({ params }) {
 													| Company
 													| User
 											).id === params.id;
+										const type =
+											transaction.revenueType ||
+											transaction.expenseType ||
+											transaction.donationType;
 										return (
 											<Collapsible
 												key={transaction.id}
@@ -234,9 +198,11 @@ export default function Accounts({ params }) {
 																transaction.transactionType
 															)}
 															:{" "}
-															{parseType(
-																transaction
-															)}
+															{type !== "other"
+																? secondaryTypeLabel[
+																		type
+																  ]
+																: transaction.expenseOther}
 														</p>
 														<p className="text-sm text-neutral-400">
 															{format(

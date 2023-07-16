@@ -3,6 +3,8 @@ import {
 	CollectionBeforeChangeHook,
 } from "payload/types";
 
+import { botUser } from "~utils/companySpecifics";
+
 export const updateToFrom: CollectionBeforeChangeHook = async ({
 	data,
 	req,
@@ -220,7 +222,7 @@ export const fillRemainingBalance: CollectionBeforeChangeHook = async ({
 
 		//if not updated by the "bot" account to prevent infinite loop
 		//figure out a way to do this without hard coding an account
-		if (data.updatedBy.value !== "6492312d69e524c5ca439c7a") {
+		if (data.updatedBy.value !== botUser.id) {
 			if (from?.value !== fromOriginal?.value) {
 				if (from?.relationTo === "accounts") {
 					const transactions = await getOldTransactions(
@@ -332,7 +334,7 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 									? transaction.toRemaining - total
 									: transaction.toRemaining,
 							updatedBy: {
-								value: "6492312d69e524c5ca439c7a",
+								value: botUser.id,
 								relationTo: "users",
 							},
 						},
@@ -376,7 +378,7 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 									? transaction.toRemaining + total
 									: transaction.toRemaining,
 							updatedBy: {
-								value: "6492312d69e524c5ca439c7a",
+								value: botUser.id,
 								relationTo: "users",
 							},
 						},
@@ -407,8 +409,8 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 
 		//this checks for the "bot" account when depth=0 and depth=1
 		if (
-			doc.updatedBy.value !== "6492312d69e524c5ca439c7a" &&
-			doc.updatedBy.value?.id !== "6492312d69e524c5ca439c7a"
+			doc.updatedBy.value !== botUser.id &&
+			doc.updatedBy.value?.id !== botUser.id
 		) {
 			if (
 				from.value !== fromOriginal.value ||
@@ -460,7 +462,7 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 											  difference
 											: transaction.toRemaining,
 									updatedBy: {
-										value: "6492312d69e524c5ca439c7a",
+										value: botUser.id,
 										relationTo: "users",
 									},
 								},
@@ -508,7 +510,7 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 											  difference
 											: transaction.toRemaining,
 									updatedBy: {
-										value: "6492312d69e524c5ca439c7a",
+										value: botUser.id,
 										relationTo: "users",
 									},
 								},
@@ -557,7 +559,7 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 										? transaction.toRemaining + difference
 										: transaction.toRemaining,
 								updatedBy: {
-									value: "6492312d69e524c5ca439c7a",
+									value: botUser.id,
 									relationTo: "users",
 								},
 							},
@@ -601,7 +603,7 @@ export const updateAccounts: CollectionAfterChangeHook = async ({
 										? transaction.toRemaining - difference
 										: transaction.toRemaining,
 								updatedBy: {
-									value: "6492312d69e524c5ca439c7a",
+									value: botUser.id,
 									relationTo: "users",
 								},
 							},
@@ -655,14 +657,7 @@ const getOldTransactions = async (payload, id, date) => {
 		},
 		sort: "-date",
 		depth: 0,
-		user: {
-			id: "6492312d69e524c5ca439c7a",
-			characterName: "Bot",
-			email: "robot@dcc.com",
-			createdAt: "2023-06-20T23:07:25.596Z",
-			updatedAt: "2023-06-23T19:39:39.367Z",
-			roles: "editor",
-		},
+		user: botUser,
 	});
 	return oldTransactions.docs;
 };
@@ -695,24 +690,7 @@ const getNewTransactions = async (payload, id, date) => {
 		},
 		sort: "+date",
 		depth: 0,
-		user: {
-			id: "6492312d69e524c5ca439c7a",
-			characterName: "Bot",
-			email: "robot@dcc.com",
-			createdAt: "2023-06-20T23:07:25.596Z",
-			updatedAt: "2023-06-23T19:39:39.367Z",
-			roles: "editor",
-		},
+		user: botUser,
 	});
 	return oldTransactions.docs;
-};
-
-const botUser = {
-	id: "6492312d69e524c5ca439c7a",
-	collection: "users",
-	characterName: "Bot",
-	email: "robot@dcc.com",
-	createdAt: "2023-06-20T23:07:25.596Z",
-	updatedAt: "2023-06-23T19:39:39.367Z",
-	roles: "editor",
 };

@@ -17,21 +17,54 @@ type User = {
 	_strategy?: string;
 } | null;
 
-const getRecords = async (
+const getTransactions = async (
 	user: User,
-	overrideAccess: boolean = true,
-	collection: string,
 	limit: number = 10,
 	pagination: boolean = true,
+	greaterThan?: Date,
+	lessThan?: Date,
 	depth: number = 1
 ) => {
 	const payload = await getPayloadClient();
+
+	let dateFilter = {};
+
+	if (greaterThan && lessThan) {
+		dateFilter = {
+			and: [
+				{
+					date: {
+						greater_than: greaterThan,
+					},
+				},
+				{
+					date: {
+						less_than: lessThan || JSON.stringify(new Date()),
+					},
+				},
+			],
+		};
+	} else if (greaterThan && !lessThan) {
+		dateFilter = {
+			date: {
+				greater_than: greaterThan,
+			},
+		};
+	} else if (!greaterThan && lessThan) {
+		dateFilter = {
+			date: {
+				less_than: lessThan,
+			},
+		};
+	}
+
 	try {
 		const results = await payload.find({
-			collection,
+			collection: "transactions",
+			where: dateFilter,
 			depth,
 			limit,
-			overrideAccess,
+			overrideAccess: false,
 			user,
 			sort: "-date",
 			pagination,
@@ -46,4 +79,4 @@ const getRecords = async (
 	}
 };
 
-export default getRecords;
+export default getTransactions;

@@ -17,92 +17,18 @@ import { toast } from "react-toastify";
 import { UserContext } from "~components/Providers";
 import getRecords from "~utils/getRecords";
 import createUpdate from "./createUpdate";
+import {
+	transactionTypes,
+	revenueType,
+	donationType,
+	expenseType,
+} from "~utils/companySpecifics";
 
 import { Account, Vehicle, Company } from "~types/Payload.types";
 
 import { FaSpinner } from "react-icons/fa";
 
 import "./style.scss";
-
-const transactionTypes = [
-	{
-		label: "Donation",
-		value: "donation",
-	},
-	{
-		label: "Expense",
-		value: "expense",
-	},
-	{
-		label: "Revenue",
-		value: "revenue",
-	},
-];
-
-const revenueType = [
-	{
-		label: "Taxi Service",
-		value: "taxi",
-	},
-	{
-		label: "Limousine Service",
-		value: "limo",
-	},
-	{
-		label: "City Tour",
-		value: "city",
-	},
-	{
-		label: "Gang Tour",
-		value: "gang",
-	},
-	{
-		label: "Helicopter Tour",
-		value: "helicopter",
-	},
-	{
-		label: "Submarine Tour",
-		value: "submarine",
-	},
-];
-
-const donationType = [
-	{
-		label: "Cash Cab",
-		value: "cashCab",
-	},
-	{
-		label: "General",
-		value: "general",
-	},
-];
-
-const expenseType = [
-	{
-		label: "Cash Cab",
-		value: "cashCab",
-	},
-	{
-		label: "Food/Drinks",
-		value: "foodDrink",
-	},
-	{
-		label: "Gas",
-		value: "gas",
-	},
-	{
-		label: "Payroll",
-		value: "payroll",
-	},
-	{
-		label: "Repairs",
-		value: "repairs",
-	},
-	{
-		label: "Other",
-		value: "other",
-	},
-];
 
 export default function AddEdit({
 	transactions,
@@ -135,7 +61,13 @@ export default function AddEdit({
 	useEffect(() => {
 		if (user) {
 			const getAllList = async () => {
-				const accounts = await getRecords(user, false, "accounts");
+				const accounts = await getRecords(
+					user,
+					false,
+					"accounts",
+					0,
+					false
+				);
 				if (accounts.success) {
 					setAccountList(accounts.success);
 				} else if (accounts.error) {
@@ -146,7 +78,13 @@ export default function AddEdit({
 						}
 					);
 				}
-				const vehicles = await getRecords(user, false, "vehicles");
+				const vehicles = await getRecords(
+					user,
+					false,
+					"vehicles",
+					0,
+					false
+				);
 				if (vehicles.success) {
 					setVehicleList(vehicles.success);
 				} else if (vehicles.error) {
@@ -157,7 +95,13 @@ export default function AddEdit({
 						}
 					);
 				}
-				const companies = await getRecords(user, false, "companies");
+				const companies = await getRecords(
+					user,
+					false,
+					"companies",
+					0,
+					false
+				);
 				if (companies.success) {
 					setCompanyList(companies.success);
 				} else if (companies.error) {
@@ -250,8 +194,6 @@ export default function AddEdit({
 				);
 				setVehicle(`vehicle:${vehicleIndex}`);
 			}
-			console.log("from: ", from);
-			console.log("to: ", to);
 			if (editing.from.relationTo === "accounts") {
 				const fromIndex = accountList.findIndex(
 					(account) => account.id === editing.from.value.id
@@ -380,12 +322,16 @@ export default function AddEdit({
 					characterName: user.characterName,
 				},
 			};
-			results.success.vehicle = vehicle
-				? {
-						relationTo: "users",
-						value: vehicleList[vehicleIndex],
-				  }
-				: null;
+			console.log("vehicleList: ", vehicleList);
+			console.log("vehicle Index: ", vehicleIndex);
+			if (vehicleIndex) {
+				results.success.vehicle = vehicle
+					? {
+							relationTo: "vehicles",
+							value: vehicleList[vehicleIndex],
+					  }
+					: null;
+			}
 		}
 
 		if (canSubmit && editing) {

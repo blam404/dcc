@@ -1,5 +1,5 @@
 import React from "react";
-import "./globals.scss";
+import "../globals.scss";
 
 import Footer from "~components/Footer";
 import Nav from "~components/Nav";
