@@ -39,7 +39,7 @@ import {
 
 import { FaPen, FaChevronDown, FaPlus, FaSpinner } from "react-icons/fa";
 import { LuArrowDownCircle, LuArrowUpCircle } from "react-icons/lu";
-import { RiMoneyDollarCircleLine } from "react-icons/Ri";
+import { RiMoneyDollarCircleLine } from "react-icons/ri";
 
 type GraphData = {
 	date: string;
