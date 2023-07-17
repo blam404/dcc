@@ -27,8 +27,3 @@ body {
 button:disabled {
 	@apply opacity-50 cursor-default pointer-events-none;
 }
-
-.modal-container--enterActive,
-.modal-container--enterDone {
-	@apply bg-neutral-800/75 transition-all
-}

@@ -28,7 +28,7 @@ import { Account, Vehicle, Company } from "~types/Payload.types";
 
 import { FaSpinner } from "react-icons/fa";
 
-import "./style.scss";
+import "../../style.scss";
 
 export default function AddEdit({
 	transactions,

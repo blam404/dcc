@@ -1,13 +1,15 @@
 "use client";
 
 import React, { useContext, useEffect, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
-import { UserContext } from "~components/Providers";
+import { MenuContext, UserContext } from "~components/Providers";
+import { ContainerWrapper, ContainerBox } from "~components/Container";
 import updateProfile from "./updateProfile";
 
 import { FaSpinner } from "react-icons/fa";
+
+import "../../style.scss";
 
 export default function Profile() {
 	const [characterName, setCharacterName] = useState("");
@@ -18,7 +20,11 @@ export default function Profile() {
 	const [pending, startTransition] = useTransition();
 
 	const { user, setUser } = useContext(UserContext);
-	const router = useRouter();
+	const { setPageTitle } = useContext(MenuContext);
+
+	useEffect(() => {
+		setPageTitle("Profile)");
+	}, []);
 
 	useEffect(() => {
 		if (user) {
@@ -79,84 +85,90 @@ export default function Profile() {
 				</div>
 			)}
 			{user && (
-				<div className="container mx-auto">
-					<h1 className="text-center text-xl">
+				<div className="container mx-auto p-8">
+					<h1 className="text-center text-2xl font-bold">
 						{user.characterName}
 					</h1>
-					<div className="pt-4 justify-center flex">
-						<form>
-							<div>
-								<div>Name</div>
-								<input
-									type="text"
-									className="leading-4 rounded-md w-80 px-2 py-1"
-									value={characterName}
-									onChange={(e) => {
-										setCharacterName(e.target.value);
-									}}
-								/>
+					<ContainerWrapper col={1} className="pt-2">
+						<ContainerBox>
+							<div className="pt-4 justify-center flex">
+								<form>
+									<div>
+										<div>Name</div>
+										<input
+											type="text"
+											className="leading-4 rounded-md w-80 px-2 py-1"
+											value={characterName}
+											onChange={(e) => {
+												setCharacterName(
+													e.target.value
+												);
+											}}
+										/>
+									</div>
+									<div>
+										<div>Phone Number</div>
+										<input
+											type="text"
+											className="leading-4 rounded-md w-80 px-2 py-1"
+											value={phoneNumber}
+											onChange={(e) => {
+												setPhoneNumber(e.target.value);
+											}}
+										/>
+									</div>
+									<div>
+										<div>Discord</div>
+										<input
+											type="text"
+											className="leading-4 rounded-md w-80 px-2 py-1"
+											value={discord}
+											onChange={(e) => {
+												setDiscord(e.target.value);
+											}}
+										/>
+									</div>
+									<div>
+										<div>Time Zone</div>
+										<input
+											type="text"
+											className="leading-4 rounded-md w-80 px-2 py-1"
+											value={timezone}
+											onChange={(e) => {
+												setTimezone(e.target.value);
+											}}
+										/>
+									</div>
+									<div>
+										<div>Bank Account</div>
+										<input
+											type="text"
+											className="leading-4 rounded-md w-80 px-2 py-1"
+											value={bankAccount}
+											onChange={(e) => {
+												setBankAccount(e.target.value);
+											}}
+										/>
+									</div>
+									<div className="pt-4 text-center">
+										<button
+											className="px-2 py-1 rounded-md bg-amber-300"
+											onClick={async () => {
+												startTransition(handleUpdate);
+											}}
+											disabled={pending || !canUpdate()}
+										>
+											{pending ? (
+												<FaSpinner className="animate-spin h-6 w-6" />
+											) : (
+												"Update"
+											)}
+										</button>
+									</div>
+								</form>
 							</div>
-							<div>
-								<div>Phone Number</div>
-								<input
-									type="text"
-									className="leading-4 rounded-md w-80 px-2 py-1"
-									value={phoneNumber}
-									onChange={(e) => {
-										setPhoneNumber(e.target.value);
-									}}
-								/>
-							</div>
-							<div>
-								<div>Discord</div>
-								<input
-									type="text"
-									className="leading-4 rounded-md w-80 px-2 py-1"
-									value={discord}
-									onChange={(e) => {
-										setDiscord(e.target.value);
-									}}
-								/>
-							</div>
-							<div>
-								<div>Time Zone</div>
-								<input
-									type="text"
-									className="leading-4 rounded-md w-80 px-2 py-1"
-									value={timezone}
-									onChange={(e) => {
-										setTimezone(e.target.value);
-									}}
-								/>
-							</div>
-							<div>
-								<div>Bank Account</div>
-								<input
-									type="text"
-									className="leading-4 rounded-md w-80 px-2 py-1"
-									value={bankAccount}
-									onChange={(e) => {
-										setBankAccount(e.target.value);
-									}}
-								/>
-							</div>
-							<div className="pt-4 text-center">
-								<button
-									disabled={pending || !canUpdate()}
-									className="bg-neutral-800 text-neutral-100 py-1 px-3 rounded-md hover:cursor-pointer"
-									onClick={async () => {
-										startTransition(() => handleUpdate());
-									}}
-								>
-									{pending ? (
-										<FaSpinner className="animate-spin h-6 w-6" />
-									) : (
-										"Update"
-									)}
-								</button>
-							</div>
-						</form>
-					</div>
+						</ContainerBox>
+					</ContainerWrapper>
 				</div>
 			)}
 		</>

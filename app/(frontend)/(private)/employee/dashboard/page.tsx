@@ -92,8 +92,8 @@ export default function Dashboard() {
 							transaction.donationAmount;
 						const index = graph.findIndex((data) => {
 							return isSameDay(
-								new Date(data?.date),
-								new Date(transaction.date)
+								parseISO(data?.date),
+								parseISO(transaction.date)
 							);
 						});
 						if (index !== -1) {
@@ -109,10 +109,7 @@ export default function Dashboard() {
 							graph[index] = newData;
 						} else {
 							graph.push({
-								date: format(
-									parseISO(transaction.date),
-									"LLL d yyyy"
-								),
+								date: transaction.date,
 								revenue: isRev ? total : 0,
 								expense: isExp ? total : 0,
 							});
@@ -268,10 +265,7 @@ export default function Dashboard() {
 											dataKey="date"
 											height={25}
 											tickFormatter={(value) =>
-												value.substring(
-													0,
-													value.length - 5
-												)
+												format(parseISO(value), "LLL d")
 											}
 										/>
 										<YAxis
@@ -281,6 +275,12 @@ export default function Dashboard() {
 										/>
 										<Tooltip
 											formatter={(value) => `$${value}`}
+											labelFormatter={(value) =>
+												format(
+													parseISO(value),
+													"LLL d yyyy"
+												)
+											}
 										/>
 										<Legend />
 										<Bar dataKey="revenue" fill="#16a34a" />

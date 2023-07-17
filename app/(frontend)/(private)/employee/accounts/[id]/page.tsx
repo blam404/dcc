@@ -13,7 +13,7 @@ import { format } from "date-fns";
 import getRecords from "~utils/getRecords";
 import getAccTransactions from "./getAccTransactions";
 import capFirstLetter from "~utils/capFirstLetter";
-import { UserContext } from "~components/Providers";
+import { MenuContext, UserContext } from "~components/Providers";
 import { ContainerWrapper, ContainerBox } from "~components/Container";
 
 import {
@@ -54,7 +54,12 @@ export default function Accounts({ params }) {
 	const [meta, setMeta] = useState<Meta>({} as Meta);
 	const [page, setPage] = useState<number>(1);
 
-	let { user } = useContext(UserContext);
+	const { user } = useContext(UserContext);
+	const { setPageTitle } = useContext(MenuContext);
+
+	useEffect(() => {
+		setPageTitle("Accounts");
+	}, []);
 
 	useEffect(() => {
 		if (user) {

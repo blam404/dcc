@@ -20,7 +20,7 @@ import useMediaQuery, { breakpoint } from "~utils/useMediaQuery";
 
 import { FaDigitalTachograph, FaUser } from "react-icons/fa";
 import { PiBankFill } from "react-icons/pi";
-import { BiSolidLogOut } from "react-icons/bi";
+import { BiSolidLogOut, BiSolidReport } from "react-icons/bi";
 import { FiMenu } from "react-icons/fi";
 
 import { Account } from "~types/Payload.types";
@@ -88,40 +88,57 @@ export default function Layout({ children }) {
 						}}
 					>
 						<Link href="/employee/dashboard">
-							<button className="flex items-center p-2">
+							<div className="flex items-center p-2">
 								<FaDigitalTachograph className="w-6 h-6 mr-2" />
 								Dashboard
-							</button>
+							</div>
 						</Link>
 					</li>
 					{["admin", "editor"].includes(user.roles) && (
-						<li>
-							<div className="flex items-center p-2">
-								<PiBankFill className="w-6 h-6 mr-2" />
-								Accounts
-							</div>
-							<div>
-								{accounts.map((account) => (
-									<Link
-										key={account.id}
-										href={`/employee/accounts/${account.id}`}
-									>
-										<div
-											className={`ml-8 py-1 px-2 text-sm ${gradientTransition}`}
-											style={{
-												background: pathname?.match(
-													account.id
-												)
-													? "#fcd34d"
-													: "",
-											}}
+						<>
+							<li>
+								<div className="flex items-center p-2">
+									<PiBankFill className="w-6 h-6 mr-2" />
+									Accounts
+								</div>
+								<div>
+									{accounts.map((account) => (
+										<Link
+											key={account.id}
+											href={`/employee/accounts/${account.id}`}
 										>
-											{account.accountName}
-										</div>
-									</Link>
-								))}
-							</div>
-						</li>
+											<div
+												className={`ml-8 py-1 px-2 text-sm ${gradientTransition}`}
+												style={{
+													background: pathname?.match(
+														account.id
+													)
+														? "#fcd34d"
+														: "",
+												}}
+											>
+												{account.accountName}
+											</div>
+										</Link>
+									))}
+								</div>
+							</li>
+							<li
+								className={gradientTransition}
+								style={{
+									background: pathname?.match("reports")
+										? "#fcd34d"
+										: "",
+								}}
+							>
+								<Link href="/employee/reports">
+									<div className="flex items-center p-2">
+										<BiSolidReport className="w-6 h-6 mr-2" />
+										Reports
+									</div>
+								</Link>
+							</li>
+						</>
 					)}
 				</ul>
 				<hr className="my-2 border-neutral-400" />
