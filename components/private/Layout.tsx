@@ -220,7 +220,7 @@ export default function Layout({ children }) {
 					</Transition>
 				)}
 				<div className={"relative col-span-12 lg:col-span-10"}>
-					<div className="fixed top-0 flex items-center w-full lg:w-5/6 h-16 bg-neutral-100 px-8 shadow-lg border-b border-neutral-300 text-xl z-10">
+					<div className="fixed top-0 flex items-center w-full lg:w-5/6 h-16 bg-neutral-100 px-4 md:px-8 shadow-lg border-b border-neutral-300 text-xl z-10">
 						{!lg && (
 							<FiMenu
 								className="w-6 h-6 mr-2 cursor-pointer"

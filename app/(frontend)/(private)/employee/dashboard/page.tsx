@@ -28,6 +28,7 @@ import getTransactions from "~utils/getTransactions";
 import { MenuContext, UserContext } from "~components/Providers";
 import AddEdit from "./AddEdit";
 import { secondaryTypeLabel } from "~utils/companySpecifics";
+import useMediaQuery, { breakpoint } from "~utils/useMediaQuery";
 
 import {
 	Account,
@@ -57,6 +58,8 @@ export default function Dashboard() {
 
 	const { user } = useContext(UserContext);
 	const { setPageTitle } = useContext(MenuContext);
+	const md = useMediaQuery(breakpoint.md);
+	const lg = useMediaQuery(breakpoint.lg);
 
 	useEffect(() => {
 		setPageTitle("Dashboard");
@@ -176,12 +179,12 @@ export default function Dashboard() {
 
 	return !loading ? (
 		<>
-			<div className="container mx-auto p-8">
+			<div className="container mx-auto py-8 px-4 md:px-8">
 				{accounts.length > 0 && (
 					<>
 						<h1 className="text-2xl font-bold">Accounts</h1>
 						<div>
-							<ContainerWrapper col={3} className="pt-2">
+							<ContainerWrapper col={md ? 3 : 1} className="pt-2">
 								{accounts.map((account) => (
 									<ContainerBox key={account.id}>
 										<div>
@@ -209,7 +212,7 @@ export default function Dashboard() {
 
 				<h1 className="text-2xl font-bold">30-Day Statistics</h1>
 				<div>
-					<ContainerWrapper col={3} className="pt-2">
+					<ContainerWrapper col={md ? 3 : 1} className="pt-2">
 						<ContainerBox>
 							<div className="flex items-center">
 								<div className="mr-2">
@@ -267,10 +270,17 @@ export default function Dashboard() {
 											tickFormatter={(value) =>
 												format(parseISO(value), "LLL d")
 											}
+											className={
+												md ? "text-base" : "text-sm"
+											}
+											tick={{ strokeWidth: "1" }}
 										/>
 										<YAxis
 											tickFormatter={(value) =>
 												`$${value}`
+											}
+											className={
+												md ? "text-base" : "text-sm"
 											}
 										/>
 										<Tooltip
@@ -299,20 +309,23 @@ export default function Dashboard() {
 								Previous 10 Transactions
 							</div>
 							<ul className="pt-2">
-								<li className="flex flex-wrap rounded-md items-center py-2 px-4 bg-amber-300">
-									<div className="w-2/12">
+								<li className="grid grid-cols-12 rounded-md items-center py-2 px-4 bg-amber-300 text-sm md:text-base">
+									<div className="col-span-4 md:col-span-3 lg:col-span-2">
 										<strong>Date</strong>
 									</div>
-									<div className="w-3/12">
+									<div className="col-span-4 lg:col-span-3">
 										<strong>Type</strong>
 									</div>
-									<div className="w-2/12">
+									<div className="col-span-3 lg:col-span-2 text-center">
 										<strong>Amount</strong>
 									</div>
-									<div className="w-4/12">
-										<strong>Notes</strong>
-									</div>
-									<div className="w-1/12 flex justify-end">
+									{lg && (
+										<div className="col-span-4">
+											<strong>Notes</strong>
+										</div>
+									)}
+
+									<div className="col-span-1 md:col-span-2 lg:col-span-1 flex justify-end">
 										<button className="py-1 px-2 bg-amber-100 rounded">
 											<FaPlus
 												onClick={() => {
@@ -343,8 +356,8 @@ export default function Dashboard() {
 														transTime={250}
 														transCurve="ease-in"
 													>
-														<li className="flex flex-wrap rounded-md items-center py-2 px-4">
-															<div className="w-2/12">
+														<li className="grid grid-cols-12 rounded-md items-center py-2 px-4 text-sm md:text-base">
+															<div className="col-span-4 md:col-span-3 lg:col-span-2">
 																{format(
 																	new Date(
 																		transaction.date
@@ -352,7 +365,7 @@ export default function Dashboard() {
 																	"LLL d, y"
 																)}
 															</div>
-															<div className="w-3/12">
+															<div className="col-span-4 lg:col-span-3">
 																{capFirstLetter(
 																	transaction.transactionType
 																)}
@@ -364,36 +377,42 @@ export default function Dashboard() {
 																	  ]
 																	: transaction.expenseOther}
 															</div>
-															<div className="w-2/12">
+															<div className="col-span-3 lg:col-span-2 text-center">
 																$
 																{transaction.paymentAmount +
 																	transaction.donationAmount}
 															</div>
-															<div className="w-4/12">
-																{
-																	transaction.notes
-																}
-															</div>
-															<div className="w-1/12 flex justify-end">
-																<FaPen
-																	className="mx-2 cursor-pointer"
-																	onClick={() => {
-																		setEditing(
-																			transaction
-																		),
-																			setIsOpen(
-																				true
-																			);
-																	}}
-																/>
+															{lg && (
+																<div className="col-span-4">
+																	{
+																		transaction.notes
+																	}
+																</div>
+															)}
+
+															<div className="col-span-1 md:col-span-2 lg:col-span-1 flex justify-end">
+																{md && (
+																	<FaPen
+																		className="mx-2 cursor-pointer"
+																		onClick={() => {
+																			setEditing(
+																				transaction
+																			),
+																				setIsOpen(
+																					true
+																				);
+																		}}
+																	/>
+																)}
 																<CollapsibleToggler>
 																	<FaChevronDown className="mx-2 cursor-pointer" />
 																</CollapsibleToggler>
 															</div>
-															<CollapsibleContent className="w-full text-sm">
+
+															<CollapsibleContent className="w-full text-sm col-span-12">
 																<hr className="h-[1px] border border-dashed border-neutral-400 my-2 w-full" />
-																<div className="w-full flex flex-wrap justify-center">
-																	<div className="w-1/3">
+																<div className="w-full grid grid-cols-12">
+																	<div className="col-span-6 md:col-span-4">
 																		<p>
 																			<strong>
 																				From:
@@ -441,7 +460,7 @@ export default function Dashboard() {
 																					.characterName}
 																		</p>
 																	</div>
-																	<div className="w-1/3">
+																	<div className="col-span-6 md:col-span-4">
 																		<p>
 																			<strong>
 																				Payment:
@@ -461,7 +480,7 @@ export default function Dashboard() {
 																			}
 																		</p>
 																	</div>
-																	<div className="w-1/3">
+																	<div className="col-span-6 md:col-span-4">
 																		<p>
 																			<strong>
 																				Vehicle:
@@ -490,6 +509,37 @@ export default function Dashboard() {
 																			}
 																		</p>
 																	</div>
+																	{!lg &&
+																		transaction.notes && (
+																			<div className="col-span-6 md:col-span-12">
+																				<p>
+																					<strong>
+																						Notes:
+																					</strong>{" "}
+																					{
+																						transaction.notes
+																					}
+																				</p>
+																			</div>
+																		)}
+																	{!md && (
+																		<div className="col-span-12 text-center pt-2">
+																			<button
+																				className="px-2 py-1 rounded-md bg-amber-300 text-sm"
+																				onClick={() => {
+																					setEditing(
+																						transaction
+																					),
+																						setIsOpen(
+																							true
+																						);
+																				}}
+																			>
+																				Edit
+																				Transaction
+																			</button>
+																		</div>
+																	)}
 																</div>
 															</CollapsibleContent>
 														</li>

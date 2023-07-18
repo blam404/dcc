@@ -145,7 +145,7 @@ export default function Accounts({ params }) {
 				</div>
 			)}
 			{!loading && (
-				<div className="container mx-auto p-8">
+				<div className="container mx-auto py-8 px-4 md:px-8">
 					<h1 className="text-xl font-bold">{account.accountName}</h1>
 					<h2 className="text-2xl font-bold">${account.balance}</h2>
 					<div className="pt-4">
@@ -155,14 +155,14 @@ export default function Accounts({ params }) {
 									Previous Transactions
 								</div>
 								<ul className="pt-2">
-									<li className="rounded-md bg-amber-300 flex flex-wrap items-center px-4 py-2">
-										<div className="w-9/12">
+									<li className="rounded-md bg-amber-300 grid grid-cols-12 items-center px-4 py-2 text-sm md:text-base">
+										<div className="col-span-8 md:col-span-9">
 											<strong>Transaction Type</strong>
 										</div>
-										<div className="w-2/12 text-right">
+										<div className="col-span-3 md:col-span-2 text-center md:text-end">
 											<strong>Amount</strong>
 										</div>
-										<div className="w-1/12 text-right"></div>
+										<div className="col-span-1 text-right"></div>
 									</li>
 									{transactions.length === 0 && (
 										<li className="flex justify-center my-4">
@@ -202,8 +202,8 @@ export default function Accounts({ params }) {
 															transTime={250}
 															transCurve="ease-in"
 														>
-															<li className="flex flex-wrap rounded-md items-center py-2 px-4">
-																<div className="w-9/12">
+															<li className="grid grid-cols-12 rounded-md items-center py-2 px-4">
+																<div className="col-span-8 md:col-span-9">
 																	<p>
 																		{capFirstLetter(
 																			transaction.transactionType
@@ -225,7 +225,7 @@ export default function Accounts({ params }) {
 																		)}
 																	</p>
 																</div>
-																<div className="w-2/12 text-right">
+																<div className="col-span-3 md:col-span-2 text-center md:text-end">
 																	<p
 																		style={{
 																			color: positive
@@ -244,15 +244,15 @@ export default function Accounts({ params }) {
 																		}
 																	</p>
 																</div>
-																<div className="w-1/12 flex justify-end">
+																<div className="col-span-1 text-end">
 																	<CollapsibleToggler>
 																		<FaChevronDown className="mx-2 cursor-pointer" />
 																	</CollapsibleToggler>
 																</div>
-																<CollapsibleContent className="w-full text-sm">
+																<CollapsibleContent className="w-full text-sm col-span-12">
 																	<hr className="h-[1px] border border-dashed border-neutral-400 my-2 w-full" />
-																	<div className="w-full flex flex-wrap justify-center">
-																		<div className="w-1/4">
+																	<div className="w-full grid grid-cols-12">
+																		<div className="col-span-12 md:col-span-4">
 																			<p>
 																				<strong>
 																					From:
@@ -300,7 +300,7 @@ export default function Accounts({ params }) {
 																						.characterName}
 																			</p>
 																		</div>
-																		<div className="w-1/4">
+																		<div className="col-span-12 md:col-span-4">
 																			<p>
 																				<strong>
 																					Payment:
@@ -320,7 +320,7 @@ export default function Accounts({ params }) {
 																				}
 																			</p>
 																		</div>
-																		<div className="w-1/4">
+																		<div className="col-span-12 md:col-span-4">
 																			<p>
 																				<strong>
 																					Vehicle:
@@ -349,7 +349,7 @@ export default function Accounts({ params }) {
 																				}
 																			</p>
 																		</div>
-																		<div className="w-1/4">
+																		<div className="col-span-12 md:col-span-12">
 																			<p>
 																				<strong>
 																					Notes:

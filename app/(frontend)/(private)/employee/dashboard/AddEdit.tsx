@@ -418,11 +418,19 @@ export default function AddEdit({
 					leaveTo="translate-y-full -translate-x-1/2"
 					className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
 				>
-					<Dialog.Panel className=" w-[530px] h-[566px] p-4 rounded-md border border-amber-300 bg-white">
+					<Dialog.Panel
+						className={`w-[274px] md:w-[530px] ${
+							transType === "revenue" ? "h-[820px]" : "h-[606px]"
+						} ${
+							transType === "revenue"
+								? "md:h-[598px]"
+								: "md:h-[532px]"
+						} p-4 rounded-md border border-amber-300 bg-white overflow-y-hidden transition-all`}
+					>
 						<Dialog.Title>
 							<strong>Add a Transaction</strong>
 						</Dialog.Title>
-						<div className="pt-2">
+						<div className="mt-2">
 							<div>Date</div>
 							<DatePicker
 								selected={date}
@@ -451,8 +459,8 @@ export default function AddEdit({
 							</select>
 						</div>
 						{transType === "revenue" && (
-							<div className="flex mt-2">
-								<div className="w-1/2 mr-4">
+							<div className="grid grid-cols-2 gap-2">
+								<div className="col-span-2 md:col-span-1 mt-2">
 									<div>Revenue Type</div>
 									<select
 										onChange={(e) =>
@@ -476,7 +484,7 @@ export default function AddEdit({
 										))}
 									</select>
 								</div>
-								<div className="w-1/2">
+								<div className="col-span-2 md:col-span-1 mt-2">
 									<div># of Passengers:</div>
 									<input
 										type="number"
@@ -517,8 +525,8 @@ export default function AddEdit({
 							</div>
 						)}
 						{transType === "expense" && (
-							<div className="flex mt-2">
-								<div className="w-1/2 mr-4">
+							<div className="grid grid-cols-2 gap-2">
+								<div className="col-span-2 md:col-span-1 mt-2">
 									<div>Expense Type</div>
 									<select
 										onChange={(e) =>
@@ -543,7 +551,7 @@ export default function AddEdit({
 									</select>
 								</div>
 								{secondType === "other" && (
-									<div className="w-1/2">
+									<div className="col-span-2 md:col-span-1 mt-2">
 										<div>Other:</div>
 										<input
 											type="text"
@@ -557,10 +565,10 @@ export default function AddEdit({
 						)}
 						{transType !== "0" && (
 							<>
-								<div className="flex mt-2">
+								<div className="grid grid-cols-2 gap-2">
 									{(transType === "revenue" ||
 										transType === "expense") && (
-										<div className="w-1/2 mr-4">
+										<div className="col-span-2 md:col-span-1 mt-2">
 											<div>Payment Amount:</div>
 											<input
 												type="number"
@@ -575,7 +583,7 @@ export default function AddEdit({
 									)}
 									{(transType === "revenue" ||
 										transType === "donation") && (
-										<div className="w-1/2">
+										<div className="col-span-2 md:col-span-1 mt-2">
 											<div>Donation Amount:</div>
 											<input
 												type="number"
@@ -589,8 +597,8 @@ export default function AddEdit({
 										</div>
 									)}
 								</div>
-								<div className="flex mt-2">
-									<div className="w-1/2 mr-4">
+								<div className="grid grid-cols-2 gap-2">
+									<div className="col-span-2 md:col-span-1 mt-2">
 										<div>From:</div>
 										<select
 											onChange={(e) =>
@@ -629,7 +637,7 @@ export default function AddEdit({
 											</option>
 										</select>
 									</div>
-									<div className="w-1/2">
+									<div className="col-span-2 md:col-span-1 mt-2">
 										<div>To:</div>
 										<select
 											onChange={(e) =>
