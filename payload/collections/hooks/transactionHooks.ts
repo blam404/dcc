@@ -658,6 +658,7 @@ const getOldTransactions = async (payload, id, date) => {
 		sort: "-date",
 		depth: 0,
 		user: botUser,
+		pagination: false,
 	});
 	return oldTransactions.docs;
 };
@@ -691,6 +692,7 @@ const getNewTransactions = async (payload, id, date) => {
 		sort: "+date",
 		depth: 0,
 		user: botUser,
+		pagination: false,
 	});
 	return oldTransactions.docs;
 };
