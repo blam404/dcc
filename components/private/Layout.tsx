@@ -209,7 +209,7 @@ export default function Layout({ children }) {
 								leave="transition-all ease-in-out duration-200 transform"
 								leaveFrom="translate-x-0"
 								leaveTo="-translate-x-full"
-								className="absolute top-0 bottom-0 sm:min-w-[40%] min-w-[50%]"
+								className="absolute top-0 bottom-0 sm:min-w-[40%] min-w-[50%] z-20"
 								as="div"
 							>
 								<Dialog.Panel className="h-full bg-neutral-100 py-2 px-1 shadow-lg border-r border-neutral-300">
