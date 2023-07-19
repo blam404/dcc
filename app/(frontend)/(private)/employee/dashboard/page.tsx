@@ -52,6 +52,7 @@ export default function Dashboard() {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [isOpen, setIsOpen] = useState(false);
 	const [transactions, setTransactions] = useState<Transaction[]>([]);
+	const [allTransactions, setAllTransactions] = useState<Transaction[]>([]);
 	const [accounts, setAccounts] = useState<Account[]>([]);
 	const [editing, setEditing] = useState<Transaction | null>(null);
 	const [graphData, setGraphData] = useState<GraphData[]>([]);
@@ -78,6 +79,7 @@ export default function Dashboard() {
 					greaterThan
 				);
 				if (results.success) {
+					setAllTransactions(results.success);
 					setTransactions(results.success.slice(0, 10));
 					const asc = [...results.success].sort(
 						(a, b) =>
@@ -156,12 +158,12 @@ export default function Dashboard() {
 		}
 	}, [user]);
 
-	const revTrans = transactions.filter(
+	const revTrans = allTransactions.filter(
 		(transaction) =>
 			transaction.transactionType === "revenue" ||
 			transaction.transactionType === "donation"
 	);
-	const expTrans = transactions.filter(
+	const expTrans = allTransactions.filter(
 		(transaction) => transaction.transactionType === "expense"
 	);
 
