@@ -1,7 +1,7 @@
 "use server";
 
 import { getPayloadClient } from "~payload/payloadClient";
-import { User } from "~types/Payload.types";
+import { User, Company, Account } from "~types/Payload.types";
 
 type Info = {
 	id: string;
@@ -12,11 +12,11 @@ type Info = {
 	noOfPassenger?: number;
 	from: {
 		relationTo: string;
-		value: string;
+		value: string | Company | User | Account;
 	} | null;
 	to: {
 		relationTo: string;
-		value: string;
+		value: string | Company | User | Account;
 	} | null;
 	paymentAmount: number;
 	donationAmount: number;
@@ -31,8 +31,8 @@ type Info = {
 	};
 	updatedBy: {
 		relationTo: "users";
-		value: string;
-	};
+		value: string | User;
+	} | null;
 };
 
 const createUpdate = async (info: Info, user: User) => {

@@ -261,26 +261,32 @@ export default function AddEdit({
 			payment >= 0 &&
 			donation >= 0;
 
-		const getRelation = (type, index) => {
+		const getRelation = (type, index, depth = 0) => {
 			switch (type) {
 				case "account":
 					return {
-						value: accountList[index].id,
+						value: depth
+							? accountList[index]
+							: accountList[index].id,
 						relationTo: "accounts",
 					};
 				case "company":
 					return {
-						value: companyList[index].id,
+						value: depth
+							? companyList[index]
+							: companyList[index].id,
 						relationTo: "companies",
 					};
 				case "vehicle":
 					return {
-						value: vehicleList[index].id,
+						value: depth
+							? vehicleList[index]
+							: vehicleList[index].id,
 						relationTo: "vehicles",
 					};
 				case "user":
 					return {
-						value: user.id,
+						value: depth ? user : user.id,
 						relationTo: "users",
 					};
 				default:
@@ -302,36 +308,44 @@ export default function AddEdit({
 				to: getRelation(toType, toIndex),
 				notes: notes.length > 0 ? notes : null,
 				vehicle: getRelation(vehicleType, vehicleIndex),
-				createdBy: {
-					value: user.id,
-					relationTo: "users",
-				},
-				updatedBy: {
-					value: user.id,
-					relationTo: "users",
-				},
+				createdBy: editing
+					? {
+							relationTo: "users",
+							value: editing.createdBy.value.id,
+					  }
+					: {
+							value: user.id,
+							relationTo: "users",
+					  },
+				updatedBy: editing
+					? {
+							value: user.id,
+							relationTo: "users",
+					  }
+					: null,
 			},
 			user
 		);
 
 		if (results.success) {
-			resetFields();
-			setIsOpen(false);
-			results.success.createdBy = {
-				value: {
-					characterName: user.characterName,
-				},
-			};
-			console.log("vehicleList: ", vehicleList);
-			console.log("vehicle Index: ", vehicleIndex);
+			// depth 0 so need to manually set to depth 1 until I figure out how to do it properly
+			results.success.createdBy = editing
+				? editing.createdBy
+				: {
+						relationTo: "users",
+						value: user,
+				  };
+			results.success.from = getRelation(fromType, fromIndex, 1);
+			results.success.to = getRelation(toType, toIndex, 1);
 			if (vehicleIndex) {
-				results.success.vehicle = vehicle
-					? {
-							relationTo: "vehicles",
-							value: vehicleList[vehicleIndex],
-					  }
-					: null;
+				results.success.vehicle = getRelation(
+					vehicleType,
+					vehicleIndex,
+					1
+				);
 			}
+			if (vehicle) resetFields();
+			setIsOpen(false);
 		}
 
 		if (canSubmit && editing) {
@@ -422,7 +436,8 @@ export default function AddEdit({
 						className={`w-[274px] md:w-[530px] ${
 							transType === "revenue" ? "h-[820px]" : "h-[606px]"
 						} ${
-							transType === "revenue"
+							transType === "revenue" ||
+							["gas", "repairs"].includes(secondType)
 								? "md:h-[598px]"
 								: "md:h-[532px]"
 						} p-4 rounded-md border border-amber-300 bg-white overflow-y-hidden transition-all`}
