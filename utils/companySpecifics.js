@@ -103,3 +103,9 @@ export const expenseType = [
 		value: "other",
 	},
 ];
+
+export const primaryColor = {
+	DEFAULT: "#fcd34d",
+	light: "#fef3c7",
+	dark: "#d97706",
+};

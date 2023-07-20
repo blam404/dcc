@@ -8,6 +8,7 @@ import handleLogin from "./handleLogin";
 import { UserContext } from "~components/Providers";
 
 import { FaSpinner } from "react-icons/fa";
+import Button from "~components/Button";
 
 export default function Login() {
 	const [email, setEmail] = useState("");
@@ -39,7 +40,7 @@ export default function Login() {
 
 	return (
 		<div className="absolute top-1/4 -translate-y-1/4 left-1/2 -translate-x-1/2">
-			<div className="bg-amber-300 py-4 px-6 rounded-md">
+			<div className="bg-primary py-4 px-6 rounded-md">
 				<h1 className="text-2xl text-center">Employee Login</h1>
 				<div className="pt-4">
 					<form>
@@ -62,9 +63,9 @@ export default function Login() {
 							/>
 						</div>
 						<div className="pt-4 text-center">
-							<button
+							<Button
 								disabled={pending}
-								className="bg-neutral-800 text-neutral-100 py-1 px-3 rounded-md hover:cursor-pointer"
+								className="!bg-neutral-800 text-neutral-100 !px-3"
 								onClick={async () => {
 									startTransition(() => login());
 								}}
@@ -74,7 +75,7 @@ export default function Login() {
 								) : (
 									"Log In"
 								)}
-							</button>
+							</Button>
 						</div>
 					</form>
 				</div>

@@ -7,7 +7,7 @@
 
 // slate-700 #334155
 // neutral-100 #f5f5f5
-// amber-300 #fcd34d
+// primary #fcd34d
 
 * {
 	margin: 0;
@@ -17,7 +17,7 @@
 
 body {
 	font-family: "Noto Sans", serif;
-	@apply text-slate-700 bg-neutral-100;
+	@apply text-slate-700 bg-primary-light;
 }
 
 .logo {

@@ -29,6 +29,7 @@ import { Account, Vehicle, Company } from "~types/Payload.types";
 import { FaSpinner } from "react-icons/fa";
 
 import "../../style.scss";
+import Button from "~components/Button";
 
 export default function AddEdit({
 	transactions,
@@ -440,7 +441,7 @@ export default function AddEdit({
 							["gas", "repairs"].includes(secondType)
 								? "md:h-[598px]"
 								: "md:h-[532px]"
-						} p-4 rounded-md border border-amber-300 bg-white overflow-y-hidden transition-all`}
+						} p-4 rounded-md border border-primary bg-white overflow-y-hidden transition-all`}
 					>
 						<Dialog.Title>
 							<strong>Add a Transaction</strong>
@@ -730,8 +731,7 @@ export default function AddEdit({
 									</div>
 								)}
 								<div className="flex justify-center mt-4">
-									<button
-										className="px-2 py-1 rounded-md bg-amber-300"
+									<Button
 										onClick={async () => {
 											startTransition(handleSubmit);
 										}}
@@ -744,7 +744,7 @@ export default function AddEdit({
 										) : (
 											"Submit"
 										)}
-									</button>
+									</Button>
 								</div>
 							</>
 						)}

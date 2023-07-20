@@ -10,6 +10,7 @@ import updateProfile from "./updateProfile";
 import { FaSpinner } from "react-icons/fa";
 
 import "../../style.scss";
+import Button from "~components/Button";
 
 export default function Profile() {
 	const [characterName, setCharacterName] = useState("");
@@ -151,8 +152,7 @@ export default function Profile() {
 										/>
 									</div>
 									<div className="pt-4 text-center">
-										<button
-											className="px-2 py-1 rounded-md bg-amber-300"
+										<Button
 											onClick={async () => {
 												startTransition(handleUpdate);
 											}}
@@ -163,7 +163,7 @@ export default function Profile() {
 											) : (
 												"Update"
 											)}
-										</button>
+										</Button>
 									</div>
 								</form>
 							</div>

@@ -21,7 +21,7 @@ export default function Nav() {
 		setUser(null);
 	};
 	return (
-		<nav className="fixed top-0 w-full bg-amber-300 shadow-md z-10">
+		<nav className="fixed top-0 w-full bg-primary shadow-md z-10">
 			<div className="container mx-auto flex justify-between items-center py-2">
 				<div></div>
 				<div>
@@ -41,7 +41,7 @@ export default function Nav() {
 					{({ close }) => (
 						<>
 							<Menu.Button>
-								<FaUserCircle className="rounded-full bg-amber-300  text-white h-10 w-10" />
+								<FaUserCircle className="rounded-full bg-primary  text-white h-10 w-10" />
 							</Menu.Button>
 							<Transition
 								enter="transition duration-200 ease-out origin-top-right"
@@ -59,7 +59,7 @@ export default function Nav() {
 										<Link href="/login">
 											<Menu.Item
 												as="li"
-												className="py-1 px-2 hover:bg-amber-100 cursor-pointer rounded-md"
+												className="py-1 px-2 hover:bg-primary-light cursor-pointer rounded-md"
 												onClick={close}
 											>
 												Log In
@@ -71,7 +71,7 @@ export default function Nav() {
 											<Link href="/employee/dashboard">
 												<Menu.Item
 													as="li"
-													className="py-1 px-2 hover:bg-amber-100 cursor-pointer rounded-t-md"
+													className="py-1 px-2 hover:bg-primary-light cursor-pointer rounded-t-md"
 													onClick={close}
 												>
 													Dashboard
@@ -80,7 +80,7 @@ export default function Nav() {
 											<Link href="/employee/profile">
 												<Menu.Item
 													as="li"
-													className="py-1 px-2 hover:bg-amber-100 cursor-pointer"
+													className="py-1 px-2 hover:bg-primary-light cursor-pointer"
 													onClick={close}
 												>
 													Profile
@@ -88,7 +88,7 @@ export default function Nav() {
 											</Link>
 											<Menu.Item
 												as="li"
-												className="py-1 px-2 hover:bg-amber-100 cursor-pointer rounded-b-md"
+												className="py-1 px-2 hover:bg-primary-light cursor-pointer rounded-b-md"
 												onClick={() => {
 													logOut();
 													close();

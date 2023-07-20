@@ -24,9 +24,10 @@ import { BiSolidLogOut, BiSolidReport } from "react-icons/bi";
 import { FiMenu } from "react-icons/fi";
 
 import { Account } from "~types/Payload.types";
+import { primaryColor } from "~utils/companySpecifics";
 
 const gradientTransition =
-	"bg-gradient-to-l from-neutral-100 to-amber-300 from-50% to-50% transition-all bg-right-bottom hover:bg-left-bottom bg-[length:200%]";
+	"bg-gradient-to-l from-neutral-100 to-primary-light from-50% to-50% transition-all bg-right-bottom hover:bg-left-bottom bg-[length:200%]";
 
 export default function Layout({ children }) {
 	const [accounts, setAccounts] = useState<Account[]>([]);
@@ -83,7 +84,7 @@ export default function Layout({ children }) {
 						className={gradientTransition}
 						style={{
 							background: pathname?.match("dashboard")
-								? "#fcd34d"
+								? primaryColor.DEFAULT
 								: "",
 						}}
 					>
@@ -113,7 +114,7 @@ export default function Layout({ children }) {
 													background: pathname?.match(
 														account.id
 													)
-														? "#fcd34d"
+														? primaryColor.DEFAULT
 														: "",
 												}}
 											>
@@ -148,14 +149,14 @@ export default function Layout({ children }) {
 				<ul>
 					<li
 						onClick={handleLogOut}
-						className={`flex items-center p-2 hover:bg-amber-100 cursor-pointer ${gradientTransition}`}
+						className={`flex items-center p-2 cursor-pointer ${gradientTransition}`}
 					>
 						<BiSolidLogOut className="w-6 h-6 mr-2" />
 						Log Out
 					</li>
 					<Link href="/employee/profile">
 						<li
-							className={`flex items-center p-2 hover:bg-amber-100 ${gradientTransition}`}
+							className={`flex items-center p-2 ${gradientTransition}`}
 						>
 							<FaUser className="w-[1.4rem] h-[1.4rem] mr-1" />
 							<div>
@@ -229,7 +230,7 @@ export default function Layout({ children }) {
 						)}
 						<strong>{pageTitle}</strong>
 					</div>
-					<div className="bg-amber-50 min-h-screen pt-16">
+					<div className="bg-primary-xlight min-h-screen pt-16">
 						{children}
 					</div>
 				</div>

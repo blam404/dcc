@@ -41,6 +41,7 @@ import {
 import { FaPen, FaChevronDown, FaPlus, FaSpinner } from "react-icons/fa";
 import { LuArrowDownCircle, LuArrowUpCircle } from "react-icons/lu";
 import { RiMoneyDollarCircleLine } from "react-icons/ri";
+import Button from "~components/Button";
 
 type GraphData = {
 	date: string;
@@ -245,7 +246,7 @@ export default function Dashboard() {
 						<ContainerBox>
 							<div className="flex items-center">
 								<div className="mr-2">
-									<RiMoneyDollarCircleLine className="text-amber-300 w-10 h-10  rounded-full p-2 bg-amber-50 border border-amber-300" />
+									<RiMoneyDollarCircleLine className="text-primary w-10 h-10  rounded-full p-2 bg-primary-xlight border border-primary" />
 								</div>
 								<div>
 									<p className="text-sm">Total Salary</p>
@@ -311,7 +312,7 @@ export default function Dashboard() {
 								Previous 10 Transactions
 							</div>
 							<ul className="pt-2">
-								<li className="grid grid-cols-12 rounded-md items-center py-2 px-4 bg-amber-300 text-sm md:text-base">
+								<li className="grid grid-cols-12 rounded-md items-center py-2 px-4 bg-primary text-sm md:text-base">
 									<div className="col-span-4 md:col-span-3 lg:col-span-2">
 										<strong>Date</strong>
 									</div>
@@ -328,14 +329,14 @@ export default function Dashboard() {
 									)}
 
 									<div className="col-span-1 md:col-span-2 lg:col-span-1 flex justify-end">
-										<button className="py-1 px-2 bg-amber-100 rounded">
+										<Button className="!bg-primary-light">
 											<FaPlus
 												onClick={() => {
 													setEditing(null);
 													setIsOpen(true);
 												}}
 											/>
-										</button>
+										</Button>
 									</div>
 								</li>
 								{transactions.length === 0 && (
@@ -526,8 +527,8 @@ export default function Dashboard() {
 																		)}
 																	{!md && (
 																		<div className="col-span-12 text-center pt-2">
-																			<button
-																				className="px-2 py-1 rounded-md bg-amber-300 text-sm"
+																			<Button
+																				className="text-sm"
 																				onClick={() => {
 																					setEditing(
 																						transaction
@@ -539,7 +540,7 @@ export default function Dashboard() {
 																			>
 																				Edit
 																				Transaction
-																			</button>
+																			</Button>
 																		</div>
 																	)}
 																</div>

@@ -32,6 +32,7 @@ import {
 	FaSpinner,
 } from "react-icons/fa";
 import { secondaryTypeLabel } from "~utils/companySpecifics";
+import Button from "~components/Button";
 
 export async function generateStaticParams() {
 	const accounts = await getRecords(null, true, "accounts");
@@ -108,30 +109,30 @@ export default function Accounts({ params }) {
 		return meta.totalPages > 1 ? (
 			<div className="pt-4 flex justify-center">
 				{meta.hasPrevPage && (
-					<button
+					<Button
 						onClick={() => goToPage(meta.prevPage)}
-						className="py-1 px-3 rounded-md bg-amber-300 mx-1"
+						className="!px-3 mx-1"
 					>
 						<FaChevronLeft className="h-4 w-4" />
-					</button>
+					</Button>
 				)}
 				{pageNum.map((number) => (
-					<button
+					<Button
 						key={number}
 						onClick={() => goToPage(number)}
 						disabled={number === page}
-						className="py-1 px-3 rounded-md bg-amber-300 mx-1"
+						className="!px-3 mx-1"
 					>
 						{number}
-					</button>
+					</Button>
 				))}
 				{meta.hasNextPage && (
-					<button
+					<Button
 						onClick={() => goToPage(meta.nextPage)}
-						className="py-1 px-3 rounded-md bg-amber-300 mx-1"
+						className="!px-3 mx-1"
 					>
 						<FaChevronRight className="h-4 w-4" />
-					</button>
+					</Button>
 				)}
 			</div>
 		) : null;
@@ -155,7 +156,7 @@ export default function Accounts({ params }) {
 									Previous Transactions
 								</div>
 								<ul className="pt-2">
-									<li className="rounded-md bg-amber-300 grid grid-cols-12 items-center px-4 py-2 text-sm md:text-base">
+									<li className="rounded-md bg-primary grid grid-cols-12 items-center px-4 py-2 text-sm md:text-base">
 										<div className="col-span-8 md:col-span-9">
 											<strong>Transaction Type</strong>
 										</div>

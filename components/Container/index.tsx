@@ -1,4 +1,4 @@
-import React, { ReactComponentElement, ReactElement, ReactNode } from "react";
+import React, { ReactNode } from "react";
 
 type WrapperProps = {
 	children: ReactNode;
