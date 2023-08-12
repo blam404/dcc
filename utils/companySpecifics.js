@@ -23,8 +23,23 @@ export const botUser = {
 	roles: "editor",
 };
 
-// add/edit modal
-export const transactionTypes = [
+// add/edit modal and everything else
+export const allFields = [
+	{ label: "Date", value: "date" },
+	{ label: "Transaction Type", value: "transactionType" },
+	{ label: "Revenue Type", value: "revenueType" },
+	{ label: "Donation Type", value: "donationType" },
+	{ label: "Expense Type", value: "expenseType" },
+	{ label: "# of Passengers", value: "noOfPassengers" },
+	{ label: "Payment Amount", value: "paymentAmount" },
+	{ label: "Donation Amount", value: "donationAmount" },
+	{ label: "From", value: "from", filterValue: "from.value" },
+	{ label: "To", value: "to", filterValue: "to.value" },
+	{ label: "Vehicle Used", value: "vehicle", filterValue: "vehicle.value" },
+	{ label: "Created By", value: "createdBy", filterValue: "createdBy.value" },
+];
+
+export const transactionType = [
 	{
 		label: "Donation",
 		value: "donation",

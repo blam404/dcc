@@ -124,7 +124,7 @@ export default function Layout({ children }) {
 									))}
 								</div>
 							</li>
-							{/* <li
+							<li
 								className={gradientTransition}
 								style={{
 									background: pathname?.match("reports")
@@ -138,7 +138,7 @@ export default function Layout({ children }) {
 										Reports
 									</div>
 								</Link>
-							</li> */}
+							</li>
 						</>
 					)}
 				</ul>

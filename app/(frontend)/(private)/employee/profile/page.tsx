@@ -11,6 +11,7 @@ import { FaSpinner } from "react-icons/fa";
 
 import "../../style.scss";
 import Button from "~components/Button";
+import PageLoading from "~components/PageLoading";
 
 export default function Profile() {
 	const [characterName, setCharacterName] = useState("");
@@ -78,99 +79,90 @@ export default function Profile() {
 		);
 	};
 
-	return (
-		<>
-			{!user && (
-				<div className="absolute top-1/4 -translate-y-1/4 left-1/2 -translate-x-1/2">
-					<FaSpinner className="animate-spin h-12 w-12" />
-				</div>
-			)}
-			{user && (
-				<div className="container mx-auto py-8 px-4 md:px-8">
-					<h1 className="text-center text-2xl font-bold">
-						{user.characterName}
-					</h1>
-					<ContainerWrapper col={1} className="pt-2">
-						<ContainerBox>
-							<div className="pt-4 justify-center flex">
-								<form>
-									<div>
-										<div>Name</div>
-										<input
-											type="text"
-											className="leading-4 rounded-md w-80 px-2 py-1"
-											value={characterName}
-											onChange={(e) => {
-												setCharacterName(
-													e.target.value
-												);
-											}}
-										/>
-									</div>
-									<div>
-										<div>Phone Number</div>
-										<input
-											type="text"
-											className="leading-4 rounded-md w-80 px-2 py-1"
-											value={phoneNumber}
-											onChange={(e) => {
-												setPhoneNumber(e.target.value);
-											}}
-										/>
-									</div>
-									<div>
-										<div>Discord</div>
-										<input
-											type="text"
-											className="leading-4 rounded-md w-80 px-2 py-1"
-											value={discord}
-											onChange={(e) => {
-												setDiscord(e.target.value);
-											}}
-										/>
-									</div>
-									<div>
-										<div>Time Zone</div>
-										<input
-											type="text"
-											className="leading-4 rounded-md w-80 px-2 py-1"
-											value={timezone}
-											onChange={(e) => {
-												setTimezone(e.target.value);
-											}}
-										/>
-									</div>
-									<div>
-										<div>Bank Account</div>
-										<input
-											type="text"
-											className="leading-4 rounded-md w-80 px-2 py-1"
-											value={bankAccount}
-											onChange={(e) => {
-												setBankAccount(e.target.value);
-											}}
-										/>
-									</div>
-									<div className="pt-4 text-center">
-										<Button
-											onClick={async () => {
-												startTransition(handleUpdate);
-											}}
-											disabled={pending || !canUpdate()}
-										>
-											{pending ? (
-												<FaSpinner className="animate-spin h-6 w-6" />
-											) : (
-												"Update"
-											)}
-										</Button>
-									</div>
-								</form>
+	return user ? (
+		<div className="container mx-auto py-8 px-4 md:px-8">
+			<h1 className="text-center text-2xl font-bold">
+				{user.characterName}
+			</h1>
+			<ContainerWrapper col={1} className="pt-2">
+				<ContainerBox>
+					<div className="pt-4 justify-center flex">
+						<form>
+							<div>
+								<div>Name</div>
+								<input
+									type="text"
+									className="leading-4 rounded-md w-80 px-2 py-1"
+									value={characterName}
+									onChange={(e) => {
+										setCharacterName(e.target.value);
+									}}
+								/>
 							</div>
-						</ContainerBox>
-					</ContainerWrapper>
-				</div>
-			)}
-		</>
+							<div>
+								<div>Phone Number</div>
+								<input
+									type="text"
+									className="leading-4 rounded-md w-80 px-2 py-1"
+									value={phoneNumber}
+									onChange={(e) => {
+										setPhoneNumber(e.target.value);
+									}}
+								/>
+							</div>
+							<div>
+								<div>Discord</div>
+								<input
+									type="text"
+									className="leading-4 rounded-md w-80 px-2 py-1"
+									value={discord}
+									onChange={(e) => {
+										setDiscord(e.target.value);
+									}}
+								/>
+							</div>
+							<div>
+								<div>Time Zone</div>
+								<input
+									type="text"
+									className="leading-4 rounded-md w-80 px-2 py-1"
+									value={timezone}
+									onChange={(e) => {
+										setTimezone(e.target.value);
+									}}
+								/>
+							</div>
+							<div>
+								<div>Bank Account</div>
+								<input
+									type="text"
+									className="leading-4 rounded-md w-80 px-2 py-1"
+									value={bankAccount}
+									onChange={(e) => {
+										setBankAccount(e.target.value);
+									}}
+								/>
+							</div>
+							<div className="pt-4 text-center">
+								<Button
+									onClick={async () => {
+										startTransition(handleUpdate);
+									}}
+									disabled={pending || !canUpdate()}
+								>
+									{pending ? (
+										<FaSpinner className="animate-spin h-6 w-6" />
+									) : (
+										"Update"
+									)}
+								</Button>
+							</div>
+						</form>
+					</div>
+				</ContainerBox>
+			</ContainerWrapper>
+		</div>
+	) : (
+		<PageLoading />
 	);
 }

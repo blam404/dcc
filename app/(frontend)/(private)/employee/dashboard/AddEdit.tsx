@@ -18,7 +18,7 @@ import { UserContext } from "~components/Providers";
 import getRecords from "~utils/getRecords";
 import createUpdate from "./createUpdate";
 import {
-	transactionTypes,
+	transactionType,
 	revenueType,
 	donationType,
 	expenseType,
@@ -451,7 +451,7 @@ export default function AddEdit({
 							<DatePicker
 								selected={date}
 								onChange={(date) => setDate(date)}
-								dateFormat="LLL d y"
+								dateFormat="LLL d, y"
 							/>
 						</div>
 						<div className="mt-2">
@@ -467,7 +467,7 @@ export default function AddEdit({
 								>
 									-- select an option --
 								</option>
-								{transactionTypes.map((type) => (
+								{transactionType.map((type) => (
 									<option key={type.value} value={type.value}>
 										{type.label}
 									</option>

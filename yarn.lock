@@ -664,6 +664,11 @@
   resolved "https://registry.yarnpkg.com/@polka/url/-/url-1.0.0-next.21.tgz#5de5a2385a35309427f6011992b544514d559aa1"
   integrity sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==
 
+"@popperjs/core@^2.11.8":
+  version "2.11.8"
+  resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.8.tgz#6b79032e760a0899cd4204710beede972a3a185f"
+  integrity sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==
+
 "@popperjs/core@^2.9.2":
   version "2.11.7"
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.7.tgz#ccab5c8f7dc557a52ca3288c10075c9ccd37fff7"
@@ -6078,6 +6083,11 @@ react-animate-height@^3.0.4:
   resolved "https://registry.yarnpkg.com/react-animate-height/-/react-animate-height-3.1.1.tgz#3e324c417a5d18afcdd78d2ad71108c14868a28b"
   integrity sha512-UkC6+V3ZlCneBRaSM7aUctDJ+PRP6ztcGtxvU7MTeoMMWPhz8BQNaX7QWaZrkzp1ih1G8uZZ+DI9nfLvtD6OdQ==
 
+react-csv@^2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/react-csv/-/react-csv-2.2.2.tgz#5bbf0d72a846412221a14880f294da9d6def9bfb"
+  integrity sha512-RG5hOcZKZFigIGE8LxIEV/OgS1vigFQT4EkaHeKgyuCbUAu9Nbd/1RYq++bJcJJ9VOqO/n9TZRADsXNDR4VEpw==
+
 react-datepicker@^4.10.0:
   version "4.11.0"
   resolved "https://registry.yarnpkg.com/react-datepicker/-/react-datepicker-4.11.0.tgz#40e73b4729a284ed206fdb322b8e84eb566e11a3"
@@ -6090,14 +6100,14 @@ react-datepicker@^4.10.0:
     react-onclickoutside "^6.12.2"
     react-popper "^2.3.0"
 
-react-datepicker@^4.14.1:
-  version "4.14.1"
-  resolved "https://registry.yarnpkg.com/react-datepicker/-/react-datepicker-4.14.1.tgz#f9f7925d0a40e3195048bbd22a5faa635765163d"
-  integrity sha512-uiPfjD+25KI5WOfCAXlzQgSLyksTagk3wwKn1KGBdF19YtybFDregRmcoNNGveQHAbT10SJZdCvk/8pbc7zxJg==
+react-datepicker@^4.16.0:
+  version "4.16.0"
+  resolved "https://registry.yarnpkg.com/react-datepicker/-/react-datepicker-4.16.0.tgz#b9dd389bb5611a1acc514bba1dd944be21dd877f"
+  integrity sha512-hNQ0PAg/LQoVbDUO/RWAdm/RYmPhN3cz7LuQ3hqbs24OSp69QCiKOJRrQ4jk1gv1jNR5oYu8SjjgfDh8q6Q1yw==
   dependencies:
-    "@popperjs/core" "^2.9.2"
+    "@popperjs/core" "^2.11.8"
     classnames "^2.2.6"
-    date-fns "^2.24.0"
+    date-fns "^2.30.0"
     prop-types "^15.7.2"
     react-onclickoutside "^6.12.2"
     react-popper "^2.3.0"

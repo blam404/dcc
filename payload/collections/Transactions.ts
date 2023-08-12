@@ -55,7 +55,7 @@ export const Transactions: CollectionConfig = {
 			required: true,
 			admin: {
 				date: {
-					displayFormat: "LLL d yyyy",
+					displayFormat: "LLL d, yyyy",
 				},
 				width: "47.5%",
 			},
